@@ -1,0 +1,33 @@
+html {
+    height: 100%;
+    width: 100%;
+    /*background-color: aqua;*/
+    /*background-image: url('../images/olia-gozha-J4kK8b9Fgj8-unsplash.jpg');*/
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    /*color: rgb(50, 48, 48);*/
+    color: #c02537 !important;
+    font-family: 'Vollkorn', serif;
+}
+
+body {
+    font-size: 1.5em;
+    padding: 0.5em;
+}
+
+a {
+    color: rgb(50, 48, 48);
+}
+
+a:hover {
+    color:cornflowerblue;
+}
+table {
+    border: 5px solid black;
+}
+
+th,
+td {
+    border: 5px solid black;
+}
