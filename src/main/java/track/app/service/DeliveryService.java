@@ -1,18 +1,18 @@
-package track.app.deliverytracking.service;
+package track.app.service;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-import track.app.deliverytracking.mapper.Mapper;
-import track.app.deliverytracking.model.Deliverer;
-import track.app.deliverytracking.model.Delivery;
-import track.app.deliverytracking.model.DeliveryStatus;
-import track.app.deliverytracking.model.History;
-import track.app.deliverytracking.model.dto.DeliveryDto;
-import track.app.deliverytracking.model.dto.StatusChange;
-import track.app.deliverytracking.repository.DeliveryRepository;
-import track.app.deliverytracking.repository.HistoryRepository;
+import track.app.mapper.Mapper;
+import track.app.model.Deliverer;
+import track.app.model.Delivery;
+import track.app.model.DeliveryStatus;
+import track.app.model.History;
+import track.app.model.dto.DeliveryDto;
+import track.app.model.dto.StatusChange;
+import track.app.repository.DeliveryRepository;
+import track.app.repository.HistoryRepository;
 
 
 import java.time.LocalDateTime;

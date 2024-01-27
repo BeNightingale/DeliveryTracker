@@ -1,18 +1,18 @@
-package track.app.deliverytracking;
+package track.app;
 
 import com.google.gson.*;
 import org.apache.commons.lang3.StringUtils;
-import track.app.deliverytracking.mapper.InPostStatusMapper;
-import track.app.deliverytracking.model.Deliverer;
-import track.app.deliverytracking.model.dto.DeliveryDto;
-import track.app.deliverytracking.model.dto.StatusChange;
+import track.app.mapper.InPostStatusMapper;
+import track.app.model.Deliverer;
+import track.app.model.dto.DeliveryDto;
+import track.app.model.dto.StatusChange;
 
 
 import java.lang.reflect.Type;
 import java.time.LocalDateTime;
 import java.util.*;
 
-import static track.app.deliverytracking.DeserializerHelper.getAsStringOrNull;
+import static track.app.DeserializerHelper.getAsStringOrNull;
 
 
 public class InPostJsonDeserializer implements JsonDeserializer<DeliveryDto> {

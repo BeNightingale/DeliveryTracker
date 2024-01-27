@@ -1,4 +1,4 @@
-package track.app.deliverytracking.service;
+package track.app.service;
 
 import com.google.gson.Gson;
 import com.sun.jersey.api.client.Client;
@@ -6,8 +6,8 @@ import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.filter.LoggingFilter;
 import lombok.extern.slf4j.Slf4j;
-import track.app.deliverytracking.model.Deliverer;
-import track.app.deliverytracking.web.PolishPostRequest;
+import track.app.model.Deliverer;
+import track.app.web.PolishPostRequest;
 
 
 import javax.ws.rs.core.MediaType;
@@ -15,8 +15,8 @@ import java.net.URI;
 import java.util.Map;
 import java.util.function.BiFunction;
 
-import static track.app.deliverytracking.model.Deliverer.INPOST;
-import static track.app.deliverytracking.model.Deliverer.POCZTA_POLSKA;
+import static track.app.model.Deliverer.INPOST;
+import static track.app.model.Deliverer.POCZTA_POLSKA;
 
 
 @Slf4j

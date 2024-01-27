@@ -1,13 +1,13 @@
-package track.app.deliverytracking.mapper;
+package track.app.mapper;
 
 import org.apache.commons.lang3.StringUtils;
-import track.app.deliverytracking.model.DeliveryStatus;
+import track.app.model.DeliveryStatus;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static track.app.deliverytracking.model.DeliveryStatus.*;
+import static track.app.model.DeliveryStatus.*;
 
 
 public class InPostStatusMapper {

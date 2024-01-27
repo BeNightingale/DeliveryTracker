@@ -1,4 +1,4 @@
-package track.app.deliverytracking.model;
+package track.app.model;
 
 import jakarta.persistence.*;
 import lombok.Data;

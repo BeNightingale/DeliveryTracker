@@ -1,4 +1,4 @@
-package track.app.deliverytracking.model.dto;
+package track.app.model.dto;
 
 import lombok.*;
 

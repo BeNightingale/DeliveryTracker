@@ -1,4 +1,4 @@
-package track.app.deliverytracking.web;
+package track.app.web;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -6,7 +6,6 @@ import com.google.gson.JsonDeserializer;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,25 +14,24 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.LocaleResolver;
-import track.app.deliverytracking.InPostJsonDeserializer;
-import track.app.deliverytracking.PolishPostJsonDeserializer;
-import track.app.deliverytracking.mapper.InPostStatusMapper;
-import track.app.deliverytracking.model.Deliverer;
-import track.app.deliverytracking.model.Delivery;
-import track.app.deliverytracking.model.DeliveryStatus;
-import track.app.deliverytracking.model.History;
-import track.app.deliverytracking.model.dto.DeliveryDto;
-import track.app.deliverytracking.repository.DeliveryRepository;
-import track.app.deliverytracking.repository.HistoryRepository;
-import track.app.deliverytracking.service.DeliveryService;
-import track.app.deliverytracking.service.HttpCaller;
+import track.app.InPostJsonDeserializer;
+import track.app.PolishPostJsonDeserializer;
+import track.app.mapper.InPostStatusMapper;
+import track.app.model.Deliverer;
+import track.app.model.Delivery;
+import track.app.model.History;
+import track.app.model.dto.DeliveryDto;
+import track.app.repository.DeliveryRepository;
+import track.app.repository.HistoryRepository;
+import track.app.service.DeliveryService;
+import track.app.service.HttpCaller;
 
 
 import java.time.LocalDateTime;
 import java.util.*;
 
-import static track.app.deliverytracking.model.Deliverer.INPOST;
-import static track.app.deliverytracking.model.Deliverer.POCZTA_POLSKA;
+import static track.app.model.Deliverer.INPOST;
+import static track.app.model.Deliverer.POCZTA_POLSKA;
 
 
 @RestController

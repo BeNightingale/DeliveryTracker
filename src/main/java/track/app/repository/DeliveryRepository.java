@@ -1,13 +1,13 @@
-package track.app.deliverytracking.repository;
+package track.app.repository;
 
 import jakarta.transaction.Transactional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
-import track.app.deliverytracking.model.Deliverer;
-import track.app.deliverytracking.model.Delivery;
-import track.app.deliverytracking.model.DeliveryStatus;
+import track.app.model.Deliverer;
+import track.app.model.Delivery;
+import track.app.model.DeliveryStatus;
 
 
 import java.util.List;

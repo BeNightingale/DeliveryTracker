@@ -1,4 +1,4 @@
-package track.app.deliverytracking.web;
+package track.app.web;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

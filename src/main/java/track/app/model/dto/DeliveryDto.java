@@ -1,16 +1,17 @@
-package track.app.deliverytracking.model.dto;
+package track.app.model.dto;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
-import track.app.deliverytracking.mapper.Mapper;
-import track.app.deliverytracking.model.Deliverer;
-import track.app.deliverytracking.model.Delivery;
+import track.app.mapper.Mapper;
+import track.app.model.Deliverer;
+import track.app.model.Delivery;
+import track.app.model.DeliveryStatus;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static track.app.deliverytracking.model.DeliveryStatus.UNKNOWN;
+import static track.app.model.DeliveryStatus.UNKNOWN;
 
 
 @ToString

@@ -1,14 +1,11 @@
-package track.app.deliverytracking.mapper;
+package track.app.mapper;
 
 
-import track.app.deliverytracking.model.Deliverer;
-import track.app.deliverytracking.model.DeliveryStatus;
+import track.app.model.Deliverer;
+import track.app.model.DeliveryStatus;
 
 import java.util.Map;
 import java.util.function.Function;
-
-import static track.app.deliverytracking.model.Deliverer.INPOST;
-import static track.app.deliverytracking.model.Deliverer.POCZTA_POLSKA;
 
 
 public class Mapper {
@@ -21,7 +18,7 @@ public class Mapper {
     private static final Function<String, DeliveryStatus> polishPostMapFunction = PolishPostStatusMapper::toDeliveryStatusMapper;
 
     public static final Map<Deliverer, Function<String, DeliveryStatus>> statusMapperFunctions = Map.of(
-            INPOST, inPostMapFunction,
-            POCZTA_POLSKA, polishPostMapFunction
+            Deliverer.INPOST, inPostMapFunction,
+            Deliverer.POCZTA_POLSKA, polishPostMapFunction
     );
 }

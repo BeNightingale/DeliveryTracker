@@ -1,4 +1,4 @@
-package track.app.deliverytracking;
+package track.app;
 
 import com.google.gson.JsonElement;
 import lombok.extern.slf4j.Slf4j;

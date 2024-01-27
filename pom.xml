@@ -9,7 +9,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>track.app</groupId>
-    <artifactId>DeliveryTracking</artifactId>
+    <artifactId>DeliveryTracker</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>DeliveryTracking</name>
     <description>DeliveryTracking</description>

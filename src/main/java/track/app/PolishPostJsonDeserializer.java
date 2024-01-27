@@ -1,17 +1,17 @@
-package track.app.deliverytracking;
+package track.app;
 
 import com.google.gson.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.CollectionUtils;
-import track.app.deliverytracking.model.Deliverer;
-import track.app.deliverytracking.model.dto.DeliveryDto;
-import track.app.deliverytracking.model.dto.StatusChange;
+import track.app.model.Deliverer;
+import track.app.model.dto.DeliveryDto;
+import track.app.model.dto.StatusChange;
 
 import java.lang.reflect.Type;
 import java.time.LocalDateTime;
 import java.util.*;
 
-import static track.app.deliverytracking.DeserializerHelper.getAsStringOrNull;
+import static track.app.DeserializerHelper.getAsStringOrNull;
 
 public class PolishPostJsonDeserializer implements JsonDeserializer<DeliveryDto> {
     @Override
