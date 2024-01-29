@@ -21,7 +21,59 @@
             int i = 0;
         %>
         <div class="bg-primary p-2 text-dark bg-opacity-10">
-            <table class="table table-striped table-hover align-middle caption-top table-light">
+<%--            <button type="button" class="btn btn-primary btn-lg" role="button" data-bs-toggle="button" aria-pressed="true">Add new delivery to track</button>--%>
+            <br>
+            <div class="d-grid gap-2 col-4 mx-auto">
+            <!-- Button trigger modal -->
+            <button type="button" class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#my">
+                Add new delivery to track
+            </button>
+            </div>
+
+            <!-- Modal -->
+            <div class="modal fade" id="my" tabindex="-1" aria-labelledby="myLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header bg-primary-subtle">
+                            <h1 class="modal-title fs-5 fw-bold" id="myLabel">Add new delivery to track</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form action="${pageContext.request.contextPath}/add" method="get" id="modal-details">
+                                <p>Insert delivery information data:</p>
+                                <div class="mb-3">
+                                    <label for="deliveryNumber" class="form-label fw-semibold">Delivery number</label>
+                                    <input type="text" class="form-control bg-primary p-2 text-dark bg-opacity-10" id="deliveryNumber" aria-describedby="numberHelp" name="deliveryNumber">
+                                    <div id="numberHelp" class="form-text">We'll never share your number with anyone else.</div>
+                                </div>
+                                <br>
+                                <div class="mb-3">
+                                    <label for="deliverer" class="form-label fw-semibold">Deliverer</label>
+                                    <select class="form-select form-select-lg mb-2 bg-primary p-2 text-dark bg-opacity-10" id="deliverer" aria-label="Large select example" name="deliverer">
+                                        <option selected>Select deliverer</option>
+                                        <option value="INPOST">INPOST</option>
+                                        <option value="POCZTA_POLSKA">POCZTA POLSKA</option>
+                                        <option value="DPD">DPD</option>
+                                        <option value="DHL">DHL</option>
+                                    </select>
+                                    <br>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="deliveryDescription" class="form-label fw-semibold">Delivery description</label>
+                                    <input type="text" class="form-control bg-primary p-2 text-dark bg-opacity-10" id="deliveryDescription" aria-describedby="descriptionHelp" name="deliveryDescription">
+                                    <div id="descriptionHelp" class="form-text">Delivery description shouldn't exceed 2000 characters.</div>
+                                </div>
+                                <br>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary" form="modal-details">Save changes</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                <table class="table table-striped table-hover align-middle caption-top table-light">
                 <caption>List of active deliveries</caption>
                 <thead class="table-header table-primary">
                 <tr class="bg-primary p-2 text-dark bg-opacity-20">
