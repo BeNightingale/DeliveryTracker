@@ -11,9 +11,17 @@
 <html lang="en">
     <head>
         <meta charset="utf-8">
+        <meta name='viewport' content='width=device-width, initial-scale=1'>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" />
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+        <script>
+            $(document).ready(function(){
+                $('[data-toggle="tooltip"]').tooltip();
+            });
+        </script>
         <title>Deliveries</title>
     </head>
 
@@ -22,6 +30,7 @@
             int i = 0;
         %>
         <div class="bg-primary p-2 text-dark bg-opacity-10">
+            <div class="fas" style='font-size:24px'>&#xf6be;</div>
 <%--            <button type="button" class="btn btn-primary btn-lg" role="button" data-bs-toggle="button" aria-pressed="true">Add new delivery to track</button>--%>
             <br>
             <div class="d-grid gap-2 col-4 mx-auto">
@@ -73,6 +82,8 @@
                         </div>
                     </div>
                 </div>
+                <br>
+                <br>
             </div>
                 <table class="table table-striped table-hover align-middle caption-top table-light">
                 <caption>List of active deliveries</caption>
@@ -84,6 +95,7 @@
                     <th scope="col">Deliverer</th>
                     <th scope="col">Status</th>
                     <th scope="col">Last status change date</th>
+                    <th scope="col"></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -96,6 +108,7 @@
                             <td><a class="nav-link" href="${pageContext.request.contextPath}/delivery?deliveryId=${delivery.deliveryId}">${delivery.deliverer}</a></td>
                             <td><a class="nav-link" href="${pageContext.request.contextPath}/delivery?deliveryId=${delivery.deliveryId}">${delivery.deliveryStatus}</a></td>
                             <td><a class="nav-link" href="${pageContext.request.contextPath}/delivery?deliveryId=${delivery.deliveryId}">null</a></td>
+                            <td><a class="btn bi-trash3" href="#" role="button" data-toggle="tooltip" data-placement="top" title="Delete delivery"></a></td>
                         </tr>
                     </c:forEach>
                 </tbody>
