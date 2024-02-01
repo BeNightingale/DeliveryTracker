@@ -6,11 +6,24 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<!DOCTYPE>
 <html>
 <head>
     <title>Title</title>
 </head>
 <body>
-<p>error</p>
+    <table>
+        <caption>Error</caption>
+        <thead class="table-header table-primary">
+        <tr class="bg-primary p-2 text-dark bg-opacity-20">
+            <th scope="col">Message</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>${message}</td>
+        </tr>
+        </tbody>
+    </table>
 </body>
 </html>

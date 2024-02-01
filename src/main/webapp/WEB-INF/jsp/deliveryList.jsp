@@ -1,5 +1,4 @@
-<%--
-  Created by IntelliJ IDEA.
+ Created by IntelliJ IDEA.
   User: beatakazmierczak
   Date: 23/01/2024
   Time: 21:12
@@ -60,7 +59,7 @@
                                 <div class="mb-3">
                                     <label for="deliverer" class="form-label fw-semibold">Deliverer</label>
                                     <select class="form-select form-select-lg mb-2 bg-primary p-2 text-dark bg-opacity-10" id="deliverer" aria-label="Large select example" name="deliverer">
-                                        <option selected>Select deliverer</option>
+<%--                                        <option selected>Select deliverer</option>--%>
                                         <option value="INPOST">INPOST</option>
                                         <option value="POCZTA_POLSKA">POCZTA POLSKA</option>
                                         <option value="DPD">DPD</option>
@@ -71,7 +70,7 @@
                                 <div class="mb-3">
                                     <label for="deliveryDescription" class="form-label fw-semibold">Delivery description</label>
                                     <input type="text" class="form-control bg-primary p-2 text-dark bg-opacity-10" id="deliveryDescription" aria-describedby="descriptionHelp" name="deliveryDescription">
-                                    <div id="descriptionHelp" class="form-text">Delivery description shouldn't exceed 2000 characters.</div>
+                                    <div id="descriptionHelp" class="form-text">Delivery description shouldn't exceed 10 characters.</div>
                                 </div>
                                 <br>
                             </form>
@@ -108,7 +107,34 @@
                             <td><a class="nav-link" href="${pageContext.request.contextPath}/delivery?deliveryId=${delivery.deliveryId}">${delivery.deliverer}</a></td>
                             <td><a class="nav-link" href="${pageContext.request.contextPath}/delivery?deliveryId=${delivery.deliveryId}">${delivery.deliveryStatus}</a></td>
                             <td><a class="nav-link" href="${pageContext.request.contextPath}/delivery?deliveryId=${delivery.deliveryId}">null</a></td>
-                            <td><a class="btn bi-trash3" href="#" role="button" data-toggle="tooltip" data-placement="top" title="Delete delivery"></a></td>
+                            <td><a class="nav-link btn bi-trash3" href="${pageContext.request.contextPath}/deleting?deliveryId=${delivery.deliveryId}" role="button" data-toggle="tooltip" data-placement="top" title="Delete delivery"></a></td>
+                            <td><div>
+                                <!-- Button trigger modal -->
+                                <a class="btn bi-trash3" data-bs-toggle="modal" data-bs-target="#exampleModal" role="button" data-toggle="tooltip" data-placement="top" title="Delete delivery">
+                                </a>
+                                </div>
+
+                                <!-- Modal -->
+                                <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header bg-primary-subtle">
+                                                <h5 class="modal-title" id="exampleModalLabel">Are you sure you want to delete this delivery?</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div>Delivery number:${delivery.deliveryNumber}</div>
+                                                <div>Deliverer:${delivery.deliverer}</div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                <a class="nav-link btn btn-primary" href="${pageContext.request.contextPath}/deleting?deliveryId=${delivery.deliveryId}" role="button">Delete this delivery</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+<%--                            <td><a class="nav-link btn bi-trash3" href="${pageContext.request.contextPath}/deleting?deliveryId=${delivery.deliveryId}" role="button" data-toggle="tooltip" data-placement="top" title="Delete delivery"></a></td>--%>
                         </tr>
                     </c:forEach>
                 </tbody>

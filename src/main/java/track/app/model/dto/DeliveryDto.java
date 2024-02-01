@@ -1,12 +1,12 @@
 package track.app.model.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import track.app.mapper.Mapper;
 import track.app.model.Deliverer;
 import track.app.model.Delivery;
-import track.app.model.DeliveryStatus;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -21,8 +21,8 @@ import static track.app.model.DeliveryStatus.UNKNOWN;
 @Builder
 public class DeliveryDto {
 
-    private int deliveryId;
-    @NotNull
+    private Integer deliveryId;
+    @NotBlank
     private String deliveryNumber;
     private LocalDateTime deliveryCreated;
     private String deliveryStatus; // status string dokładnie tj. pobrany z api dostawcy (z jsona); może być null -> będzie zmapowany na UNKNOWN
@@ -30,15 +30,14 @@ public class DeliveryDto {
     private String statusDescription;
     @NotNull
     private Deliverer deliverer;
-    @Size(max = 2000)
+    @Size(max = 10)
     private String deliveryDescription;
     private LocalDateTime thisStatusChangeDateTime;
-    private boolean finished;
+    private Boolean finished;
     private List<StatusChange> statusChangesList;
 
     public Delivery toDelivery() {
         final Delivery delivery = new Delivery();
-        delivery.setDeliveryId(this.deliveryId);
         delivery.setDeliveryNumber(this.deliveryNumber);
         delivery.setDeliveryCreated(this.deliveryCreated);
         delivery.setDeliveryStatus(

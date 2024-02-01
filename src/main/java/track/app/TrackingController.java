@@ -1,31 +1,39 @@
 package track.app;
+
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.validation.Errors;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import track.app.model.Deliverer;
+import org.springframework.web.servlet.LocaleResolver;
 import track.app.model.Delivery;
-import track.app.model.DeliveryStatus;
 import track.app.model.History;
 import track.app.model.dto.DeliveryDto;
 import track.app.repository.DeliveryRepository;
 import track.app.repository.HistoryRepository;
 
 import java.time.LocalDateTime;
+import java.util.Locale;
+import java.util.Objects;
 
 @Controller
 @RequiredArgsConstructor
 @Slf4j
 public class TrackingController {
 
+    private static final String ERROR = "error";
+
     private final DeliveryRepository deliveryRepository;
     private final HistoryRepository historyRepository;
+    private final LocaleResolver localeResolver;
+    private final MessageSource messageSource;
 
+    //TODO delete, update manually, check if history doesn't repeat, view of success and error, zamykanie modalu przy powrocie(post/get ? przy zmianie strony pomoże?)
     @GetMapping("/")
     public String home() {
         return "root";
@@ -51,51 +59,58 @@ public class TrackingController {
     }
 
     @GetMapping("/add")
-    public String addDelivery(ModelMap model,
-                              @RequestParam(name = "deliveryNumber") String deliveryNumber,
-                              @RequestParam(name = "deliverer") String stringDeliverer,
-                              @RequestParam(name = "deliveryDescription") String deliveryDescription) {
+    public String addDelivery(ModelMap model, @Validated DeliveryDto deliveryDto, Errors errors, HttpServletRequest httpRequest) {
         try {
-            // TODO zrobić walidację parametrów
-            // Sprawdzenie, czy w bazie nie ma takiej przesyłki od tego dostawcy.
-            final Deliverer deliverer = Deliverer.getDelivererFromString(stringDeliverer);
-            System.out.printf("Deliverer: {}", deliverer);
-            if (deliverer == null) {
-                throw new IllegalArgumentException("Wrong deliverer name");
+            log.error("DeliveryDto={}", deliveryDto);
+            Locale locale = localeResolver.resolveLocale(httpRequest);
+            if (errors.hasErrors()) {
+                log.error("Są błędy");
+                log.error("Liczba błedów {}", errors.getErrorCount());
+                log.error("Nazwa błędu1 {}", errors.getAllErrors().get(0).getObjectName());
+                log.error("Lista błedów {}", errors.getAllErrors().toString());
+                final String message = errors.getAllErrors().stream()
+                        .map(oe -> messageSource.getMessage(Objects.requireNonNull(oe.getCode()), oe.getArguments(), locale))
+                        .reduce("errors:\n", (accu, error) -> accu + error + "\n");
+                model.addAttribute("message", message);
+                return ERROR;
             }
             final Delivery deliveriesWithNumber = deliveryRepository.findDeliveryByDeliveryNumberAndDeliverer(
-                        deliveryNumber, deliverer);
+                    deliveryDto.getDeliveryNumber(), deliveryDto.getDeliverer());
             if (deliveriesWithNumber != null) {
-                log.debug("Delivery cannot be inserted into database because there is already a {} delivery with this number in database.", deliverer);
-                System.out.println("Nie można wpisać do bazy, bo juz jest!");
-                return "error";
+                log.error("Delivery cannot be inserted into database because there is already {} delivery with this number in database.",
+                        deliveryDto.getDeliverer());
+                model.addAttribute("message", String.format("Delivery cannot be inserted into database because there is already %s delivery with this number in database.",
+                        deliveryDto.getDeliverer()));
+                return ERROR;
             }
             // Jeśli nie ma, to wpisujemy do bazy danych.
-            final DeliveryDto deliveryDto = DeliveryDto
-                            .builder()
-                            .deliveryNumber(deliveryNumber)
-                            .deliverer(deliverer)
-                            .deliveryCreated(LocalDateTime.now())
-                            .thisStatusChangeDateTime(LocalDateTime.now())
-                            .deliveryDescription(deliveryDescription)
-                            .build();
-            System.out.printf("DeliveryDto={}", deliveryDto);
-            final Delivery delivery = deliveryRepository.save(deliveryDto.toDelivery());
+            final DeliveryDto deliveryDto1 = DeliveryDto
+                    .builder()
+                    .deliveryNumber(deliveryDto.getDeliveryNumber())
+                    .deliverer(deliveryDto.getDeliverer())
+                    .deliveryCreated(LocalDateTime.now())
+                    .thisStatusChangeDateTime(LocalDateTime.now())
+                    .deliveryDescription(deliveryDto.getDeliveryDescription())
+                    .finished(false)
+                    .build();
+            log.error("Nowe deliveryDto1={}", deliveryDto1);
+            final Delivery delivery = deliveryRepository.save(deliveryDto1.toDelivery());
             model.addAttribute("delivery", delivery);
-            log.debug("Delivery inserted into database: {}.", delivery);
-            System.out.printf("Delivery inserted into database: {}.", delivery);
+            log.error("Delivery inserted into database: {}.", delivery);
             final History history = historyRepository.save(History.createHistoryFromDelivery(delivery));
             model.addAttribute("history", history);
-            log.debug("History event inserted into database table 'history': {}.", history);
-            System.out.printf("History event inserted into database table 'history': {}.", history);
+            log.error("History event inserted into database table 'history': {}.", history);
             return "success";
-        } catch(Exception ex) {
-//            log.debug("Inserting delivery into database wasn't possible, because the parcel with the deliveryNumber {}" +
-//                    " of the deliverer {}, is already tracked in database.", deliveryNumber, deliverer);
-            log.error("No success in setting information about delivery with deliveryNumber = {} in database.", deliveryNumber);
-            System.out.printf("No success in setting information about delivery with deliveryNumber = {} in database.", deliveryNumber);
-            return "error";
+        } catch (Exception ex) {
+            log.error("No success in setting information about delivery with deliveryNumber = {} in database.", deliveryDto.getDeliveryNumber());
+            return ERROR;
         }
+    }
 
+    @GetMapping("/deleting")
+    public String deleteDelivery(@RequestParam int deliveryId) {
+        int changedRowsNumber = deliveryRepository.deleteByDeliveryId(deliveryId);
+        log.error("Changed row number {} Deleted deliveryId={}.", changedRowsNumber, deliveryId);
+        return "success";
     }
 }

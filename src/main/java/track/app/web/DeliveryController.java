@@ -115,6 +115,7 @@ public class DeliveryController {
                 // Jeśli nie ma, to wpisujemy do bazy danych.
                 deliveryDto.setDeliveryCreated(LocalDateTime.now());
                 deliveryDto.setThisStatusChangeDateTime(LocalDateTime.now());
+                deliveryDto.setFinished(false);
                 final Delivery delivery = deliveryRepository.save(deliveryDto.toDelivery());
                 log.debug("Delivery inserted into database: {}.", delivery);
                 final History history = historyRepository.save(History.createHistoryFromDelivery(delivery));

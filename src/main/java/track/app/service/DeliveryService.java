@@ -69,7 +69,7 @@ public class DeliveryService {
         delivery.setDeliveryStatus(deliveryDtoStatus);
         delivery.setStatusDescription(statusDescription);
         delivery.setStatusChangeDatetime(statusChangeDatetime);
-        delivery.setFinished(deliveryDto.isFinished());
+        delivery.setFinished(deliveryDto.getFinished());
         final Delivery afterUpdate = deliveryRepository.save(delivery);
         log.debug("[After update] New delivery state expected after update in database: {}.", afterUpdate);
         // After status update in 'delivery' table there is to be written entry in table 'history'.
