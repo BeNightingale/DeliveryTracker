@@ -34,6 +34,7 @@ public class TrackingController {
     private final MessageSource messageSource;
 
     //TODO delete, update manually, check if history doesn't repeat, view of success and error, zamykanie modalu przy powrocie(post/get ? przy zmianie strony pomoże?)
+    //TODO stronicowanie, sortowanie
     @GetMapping("/")
     public String home() {
         return "root";

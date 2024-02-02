@@ -1,9 +1,8 @@
- Created by IntelliJ IDEA.
-  User: beatakazmierczak
-  Date: 23/01/2024
-  Time: 21:12
-  To change this template use File | Settings | File Templates.
---%>
+<%-- Created by IntelliJ IDEA.--%>
+<%--  User: beatakazmierczak--%>
+<%--  Date: 23/01/2024--%>
+<%--  Time: 21:12--%>
+<%--  To change this template use File | Settings | File Templates.--%>
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <%@ page contentType="text/html;charset=UTF-8"%>
 <!DOCTYPE html>
@@ -107,11 +106,14 @@
                             <td><a class="nav-link" href="${pageContext.request.contextPath}/delivery?deliveryId=${delivery.deliveryId}">${delivery.deliverer}</a></td>
                             <td><a class="nav-link" href="${pageContext.request.contextPath}/delivery?deliveryId=${delivery.deliveryId}">${delivery.deliveryStatus}</a></td>
                             <td><a class="nav-link" href="${pageContext.request.contextPath}/delivery?deliveryId=${delivery.deliveryId}">null</a></td>
-                            <td><a class="nav-link btn bi-trash3" href="${pageContext.request.contextPath}/deleting?deliveryId=${delivery.deliveryId}" role="button" data-toggle="tooltip" data-placement="top" title="Delete delivery"></a></td>
+<%--                            <td><a class="nav-link btn bi-trash3" href="${pageContext.request.contextPath}/deleting?deliveryId=${delivery.deliveryId}" role="button" data-toggle="tooltip" data-placement="top" title="Delete delivery"></a></td>--%>
+                            <td>
+                                <button class="btn bi-trash3 deleteBtn" data-delivery-id="${delivery.deliveryId}" data-bs-toggle="modal" data-bs-target="#deleteModal" data-toggle="tooltip" data-placement="top" title="Delete delivery"></button>
+                            </td>
                             <td><div>
                                 <!-- Button trigger modal -->
-                                <a class="btn bi-trash3" data-bs-toggle="modal" data-bs-target="#exampleModal" role="button" data-toggle="tooltip" data-placement="top" title="Delete delivery">
-                                </a>
+<%--                                <a class="btn bi-trash3" data-bs-toggle="modal" data-delivery-id="${delivery.deliveryId}" data-bs-target="#exampleModal" role="button" data-toggle="tooltip" data-placement="top" title="Delete delivery">--%>
+<%--                                </a>--%>
                                 </div>
 
                                 <!-- Modal -->
@@ -123,9 +125,11 @@
                                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                             </div>
                                             <div class="modal-body">
+
                                                 <div>Delivery number:${delivery.deliveryNumber}</div>
                                                 <div>Deliverer:${delivery.deliverer}</div>
                                             </div>
+
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                                                 <a class="nav-link btn btn-primary" href="${pageContext.request.contextPath}/deleting?deliveryId=${delivery.deliveryId}" role="button">Delete this delivery</a>
@@ -138,6 +142,66 @@
                         </tr>
                     </c:forEach>
                 </tbody>
+                    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="deleteModalLabel">Delete delivery</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    Are you sure you want to delete the book with ID <span id="deliveryIdToDelete"></span>?
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    <button type="button" class="btn btn-danger" onclick="deleteDelivery()">Delete delivery</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header bg-success-subtle">
+                                    <h5 class="modal-title fs-5 fw-bold" id="successModalLabel">Deletion successful</h5>
+                                    <br>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body bg-success p-2 text-dark bg-opacity-10">
+                                    <span class="fw-bold" id="successMessage"></span>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <script>
+                        $('.deleteBtn').on('click', function () {
+                            var deliveryId = $(this).data('delivery-id');
+                            $('#deliveryIdToDelete').text(deliveryId);
+                            $('#deleteModal').modal('show');
+                        });
+
+                        function deleteDelivery() {
+                            var deliveryId = $('#deliveryIdToDelete').text();
+                            // Now you can use AJAX or any method to send the bookId to your delete endpoint
+                            // and handle the deletion in your controller.
+                            // Example AJAX call:
+                             $.ajax({
+                                 type: "GET",
+                                 url: "${pageContext.request.contextPath}/deleting?deliveryId=" + deliveryId,
+                                 success: function () {
+                                     $('#successModal').modal('show');
+                                     $('#successMessage').text('A delivery with deliveryId ' + deliveryId + ' was deleted.');
+                                     $('#deleteModal').modal('hide');
+                                 }
+                            //     error: function () {
+                            //         // Handle error
+                            //     }
+                             });
+                        }
+                    </script>
             </table>
             <ul class="pagination justify-content-end">
                 <li class="page-item"><a class="page-link" href="#">Previous</a></li>
