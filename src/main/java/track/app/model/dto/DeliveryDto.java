@@ -30,7 +30,7 @@ public class DeliveryDto {
     private String statusDescription;
     @NotNull
     private Deliverer deliverer;
-    @Size(max = 10)
+    @Size(max = 200)
     private String deliveryDescription;
     private LocalDateTime thisStatusChangeDateTime;
     private Boolean finished;

@@ -20,6 +20,27 @@
                 $('[data-toggle="tooltip"]').tooltip();
             });
         </script>
+        <style>
+            .tooltip-inner {
+                background-color: cornflowerblue !important;
+                /*!important is not necessary if you place custom.css at the end of your css calls. For the purpose of this demo, it seems to be required in SO snippet*/
+                color: black;
+                font-weight: 500;
+            }
+
+            .tooltip.top .tooltip-arrow {
+                border-top-color: cornflowerblue;
+            }
+        </style>
+        <style>
+            .truncate-cell {
+                max-width: 10px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                cursor: pointer;
+            }
+        </style>
         <title>Deliveries</title>
     </head>
 
@@ -28,6 +49,9 @@
             int i = 0;
         %>
         <div class="bg-primary p-2 text-dark bg-opacity-10">
+            <br>
+            <H2 class="position-absolute top-10 start-50 translate-middle">Deliveries</H2>
+            <br>
             <div class="fas" style='font-size:24px'>&#xf6be;</div>
 <%--            <button type="button" class="btn btn-primary btn-lg" role="button" data-bs-toggle="button" aria-pressed="true">Add new delivery to track</button>--%>
             <br>
@@ -69,7 +93,7 @@
                                 <div class="mb-3">
                                     <label for="deliveryDescription" class="form-label fw-semibold">Delivery description</label>
                                     <input type="text" class="form-control bg-primary p-2 text-dark bg-opacity-10" id="deliveryDescription" aria-describedby="descriptionHelp" name="deliveryDescription">
-                                    <div id="descriptionHelp" class="form-text">Delivery description shouldn't exceed 10 characters.</div>
+                                    <div id="descriptionHelp" class="form-text">Delivery description shouldn't exceed 200 characters.</div>
                                 </div>
                                 <br>
                             </form>
@@ -83,13 +107,14 @@
                 <br>
                 <br>
             </div>
-                <table class="table table-striped table-hover align-middle caption-top table-light">
+                <table class="table table-striped table-hover align-middle caption-top table-light table-responsive-sm" >
                 <caption>List of active deliveries</caption>
                 <thead class="table-header table-primary">
                 <tr class="bg-primary p-2 text-dark bg-opacity-20">
                     <th scope="col">no</th>
-                    <th scope="col">Delivery number</th>
+                    <th scope="col" class="number-col">Delivery number</th>
                     <th scope="col">Delivery description</th>
+                    <th scope="col"></th>
                     <th scope="col">Deliverer</th>
                     <th scope="col">Status</th>
                     <th scope="col">Last status change date</th>
@@ -101,8 +126,9 @@
                         <tr>
                             <% i+=1;%>
                             <td><a class="nav-link" href="${pageContext.request.contextPath}/delivery?deliveryId=${delivery.deliveryId}"><%=i%></a></td>
-                            <td><a class="nav-link" href="${pageContext.request.contextPath}/delivery?deliveryId=${delivery.deliveryId}">${delivery.deliveryNumber}</a></td>
-                            <td><a class="nav-link" href="${pageContext.request.contextPath}/delivery?deliveryId=${delivery.deliveryId}">${delivery.deliveryDescription}</a></td>
+                            <td class="col-1 text-truncate"><a class="nav-link" href="${pageContext.request.contextPath}/delivery?deliveryId=${delivery.deliveryId}">${delivery.deliveryNumber}</a></td>
+                            <td class="truncate-cell" data-toggle="tooltip" data-placement="top" title="${delivery.deliveryDescription}"><a class="nav-link" href="${pageContext.request.contextPath}/delivery?deliveryId=${delivery.deliveryId}">${delivery.deliveryDescription}</a></td>
+                            <td></td>
                             <td><a class="nav-link" href="${pageContext.request.contextPath}/delivery?deliveryId=${delivery.deliveryId}">${delivery.deliverer}</a></td>
                             <td><a class="nav-link" href="${pageContext.request.contextPath}/delivery?deliveryId=${delivery.deliveryId}">${delivery.deliveryStatus}</a></td>
                             <td><a class="nav-link" href="${pageContext.request.contextPath}/delivery?deliveryId=${delivery.deliveryId}">${delivery.statusChangeDatetime}</a></td>
@@ -141,41 +167,41 @@
 <%--                            <td><a class="nav-link btn bi-trash3" href="${pageContext.request.contextPath}/deleting?deliveryId=${delivery.deliveryId}" role="button" data-toggle="tooltip" data-placement="top" title="Delete delivery"></a></td>--%>
                         </tr>
                     </c:forEach>
+                     <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                         <div class="modal-dialog">
+                             <div class="modal-content">
+                                 <div class="modal-header">
+                                     <h5 class="modal-title" id="deleteModalLabel">Delete delivery</h5>
+                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                 </div>
+                                 <div class="modal-body">
+                                     Are you sure you want to delete the book with ID <span id="deliveryIdToDelete"></span>?
+                                 </div>
+                                 <div class="modal-footer">
+                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                     <button type="button" class="btn btn-danger" onclick="deleteDelivery()">Delete delivery</button>
+                                 </div>
+                             </div>
+                         </div>
+                     </div>
+                     <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+                         <div class="modal-dialog">
+                             <div class="modal-content">
+                                 <div class="modal-header bg-success-subtle">
+                                     <h5 class="modal-title fs-5 fw-bold" id="successModalLabel">Deletion successful</h5>
+                                     <br>
+                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                 </div>
+                                 <div class="modal-body bg-success p-2 text-dark bg-opacity-10">
+                                     <span class="fw-bold" id="successMessage"></span>
+                                 </div>
+                                 <div class="modal-footer">
+                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                 </div>
+                             </div>
+                         </div>
+                     </div>
                 </tbody>
-                    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="deleteModalLabel">Delete delivery</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    Are you sure you want to delete the book with ID <span id="deliveryIdToDelete"></span>?
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                    <button type="button" class="btn btn-danger" onclick="deleteDelivery()">Delete delivery</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header bg-success-subtle">
-                                    <h5 class="modal-title fs-5 fw-bold" id="successModalLabel">Deletion successful</h5>
-                                    <br>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body bg-success p-2 text-dark bg-opacity-10">
-                                    <span class="fw-bold" id="successMessage"></span>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                     <script>
                         $('.deleteBtn').on('click', function () {
                             var deliveryId = $(this).data('delivery-id');
