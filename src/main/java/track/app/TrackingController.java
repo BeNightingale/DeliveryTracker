@@ -66,9 +66,9 @@ public class TrackingController {
             Locale locale = localeResolver.resolveLocale(httpRequest);
             if (errors.hasErrors()) {
                 log.error("Są błędy");
-                log.error("Liczba błedów {}", errors.getErrorCount());
+                log.error("Liczba błędów {}", errors.getErrorCount());
                 log.error("Nazwa błędu1 {}", errors.getAllErrors().get(0).getObjectName());
-                log.error("Lista błedów {}", errors.getAllErrors().toString());
+                log.error("Lista błędów {}", errors.getAllErrors());
                 final String message = errors.getAllErrors().stream()
                         .map(oe -> messageSource.getMessage(Objects.requireNonNull(oe.getCode()), oe.getArguments(), locale))
                         .reduce("errors:\n", (accu, error) -> accu + error + "\n");
@@ -108,10 +108,17 @@ public class TrackingController {
         }
     }
 
+    /**
+     * Endpoint służy do usuwania informacji o przesyłce z tabeli deliveries oraz historii śledzenia zmian jej statusów z tabeli history.
+     * @param deliveryId - identyfikator przesyłki
+     * @return - po wykonaniu operacji trigger uruchamia modal z informacją o powodzeniu lub niepowodzeniu usuwania danych
+     */
     @GetMapping("/deleting")
     public String deleteDelivery(@RequestParam int deliveryId) {
-        int changedRowsNumber = deliveryRepository.deleteByDeliveryId(deliveryId);
-        log.error("Changed row number {} Deleted deliveryId={}.", changedRowsNumber, deliveryId);
+        int changedDeliveriesRowsNumber = deliveryRepository.deleteByDeliveryId(deliveryId);
+        log.error("Changed row number in 'deliveries' table = {}. Deleted deliveryId = {}.", changedDeliveriesRowsNumber, deliveryId);
+        int changedHistoryRowsNumber = historyRepository.deleteByDeliveryId(deliveryId);
+        log.error("Changed row number in 'history' table = {}. Deleted deliveryId = {}.", changedHistoryRowsNumber, deliveryId);
         return "success";
     }
 }

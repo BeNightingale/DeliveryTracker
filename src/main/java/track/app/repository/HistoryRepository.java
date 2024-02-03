@@ -1,6 +1,7 @@
 package track.app.repository;
 
 
+import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.lang.NonNull;
 import track.app.model.DeliveryStatus;
@@ -13,5 +14,8 @@ public interface HistoryRepository extends JpaRepository<History, Integer> {
 
     Optional<History> findByDeliveryIdAndDeliveryStatus(int deliveryId, DeliveryStatus deliveryStatus);
     List<History> findHistoryByDeliveryId(@NonNull int deliveryId);
+
+    @Transactional
+    int deleteByDeliveryId(int id);
 
 }
