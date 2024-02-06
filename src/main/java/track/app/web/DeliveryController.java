@@ -48,12 +48,6 @@ public class DeliveryController {
     private final DeliveryService deliveryService;
     private final LocaleResolver localeResolver;
     private final MessageSource messageSource;
-    private final Gson inPostGson = initGson(new InPostJsonDeserializer());
-    private final Gson polishPostGson = initGson(new PolishPostJsonDeserializer());
-    private final Map<Deliverer, Gson> gsonsMap = Map.of(
-            INPOST, inPostGson,
-            POCZTA_POLSKA, polishPostGson
-    );
 
 
     // ------------ operacje dotyczące tylko bazy danych aplikacji DeliveryTracking ---------------------
@@ -198,7 +192,7 @@ public class DeliveryController {
     @GetMapping("/polish_deliveries/{deliveryNumber}")
     public DeliveryDto getDeliveryInformationFromPolishPost(@PathVariable String deliveryNumber) {
         final String json = HttpCaller.callHttpPostMethod(HttpCaller.endpointUrlsMap.get(POCZTA_POLSKA), deliveryNumber);
-        return polishPostGson.fromJson(json, DeliveryDto.class);
+        return deliveryService.getPolishPostGson().fromJson(json, DeliveryDto.class);
     }
 
 
@@ -224,12 +218,12 @@ public class DeliveryController {
     @GetMapping("/inpost_deliveries/{deliveryNumber}")
     public DeliveryDto getDeliveryInformationFromInPost(@PathVariable String deliveryNumber) {
         String json = HttpCaller.callHttpGetMethod(INPOST_ENDPOINT_URL, deliveryNumber);
-        return inPostGson.fromJson(json, DeliveryDto.class);
+        return deliveryService.getInPostGson().fromJson(json, DeliveryDto.class);
     }
 
     /**
      * Pobiera z tabeli deliveries numery wszystkich przesyłek o aktywnych statusach (czyli przesyłek niedostarczonych),
-     * a następnie - na podstawie informacji pobranych z api InPost lub api Poczty Polskiej — aktualizuje im statusy.
+     * a następnie — na podstawie informacji pobranych z api InPost lub api Poczty Polskiej — aktualizuje im statusy.
      *
      * @return liczba zmienionych wierszy w tabeli deliveries
      */
@@ -248,41 +242,9 @@ public class DeliveryController {
             return ResponseEntity.noContent().build();
         }
         final List<DeliveryDto> deliveryDtoList = new ArrayList<>();// będzie mieć statusy delivera
-        deliveryDtoList.addAll(findActiveDeliversUpdatesForDeliver(INPOST, inPostActiveDeliveries));
-        deliveryDtoList.addAll(findActiveDeliversUpdatesForDeliver(POCZTA_POLSKA, polishPostActiveDeliveries));
+        deliveryDtoList.addAll(deliveryService.findActiveDeliversUpdatesForDeliver(INPOST, inPostActiveDeliveries));
+        deliveryDtoList.addAll(deliveryService.findActiveDeliversUpdatesForDeliver(POCZTA_POLSKA, polishPostActiveDeliveries));
         final Integer rowsChanged = deliveryService.updateActiveDeliveriesStatuses(deliveryDtoList);
         return ResponseEntity.ok().body(rowsChanged);
-    }
-
-    private Gson initGson(JsonDeserializer<DeliveryDto> jsonDeserializer) {
-        return new GsonBuilder()
-                .registerTypeAdapter(DeliveryDto.class, jsonDeserializer)
-                .setPrettyPrinting()
-                .disableHtmlEscaping()
-                .create();
-    }
-
-    private List<DeliveryDto> findActiveDeliversUpdatesForDeliver(Deliverer deliverer, List<Delivery> activeDeliveriesFromDatabase) {
-        if (CollectionUtils.isEmpty(activeDeliveriesFromDatabase)) {
-            log.debug("No active deliveries from {}. Deliveries from this deliverer won't be updated.", deliverer);
-            return Collections.emptyList();
-        }
-        log.info("Start updating {} deliveries.", deliverer);
-        final List<DeliveryDto> deliveryDtoList = new ArrayList<>();// będzie mieć statusy delivera
-        log.debug("Active {} deliveries: {}.", deliverer, activeDeliveriesFromDatabase);
-        activeDeliveriesFromDatabase.stream()
-                .filter(Objects::nonNull)
-                .forEach(delivery -> {
-                    log.debug("Found active delivery in database with delivery_number = {}", delivery.getDeliveryNumber());
-                    final String json = HttpCaller.callersMap
-                            .get(deliverer)
-                            .apply(
-                                    HttpCaller.endpointUrlsMap.get(deliverer), delivery.getDeliveryNumber()
-                            );
-                    final DeliveryDto deliveryDto = gsonsMap.get(deliverer).fromJson(json, DeliveryDto.class);
-                    deliveryDto.setDeliveryId(delivery.getDeliveryId());//TODO, czy koniecznie potrzebne?? ; jednak wygodnie jak ma - do wyszukiwania w tabeli historia - nie trzeba przekazywać osobno tej liczby
-                    deliveryDtoList.add(deliveryDto);
-                });
-        return deliveryDtoList;
     }
 }

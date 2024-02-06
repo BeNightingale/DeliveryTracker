@@ -1,9 +1,15 @@
 package track.app.service;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializer;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import track.app.InPostJsonDeserializer;
+import track.app.PolishPostJsonDeserializer;
 import track.app.mapper.Mapper;
 import track.app.model.Deliverer;
 import track.app.model.Delivery;
@@ -16,13 +22,23 @@ import track.app.repository.HistoryRepository;
 
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+
+import static track.app.model.Deliverer.INPOST;
+import static track.app.model.Deliverer.POCZTA_POLSKA;
 
 @Service
 @AllArgsConstructor
+@Getter
 @Slf4j
 public class DeliveryService {
+
+    private final Gson inPostGson = initGson(new InPostJsonDeserializer());
+    private final Gson polishPostGson = initGson(new PolishPostJsonDeserializer());
+    public final Map<Deliverer, Gson> gsonsMap = Map.of(
+            INPOST, inPostGson,
+            POCZTA_POLSKA, polishPostGson
+    );
 
     DeliveryRepository deliveryRepository;
     private HistoryRepository historyRepository;
@@ -100,5 +116,37 @@ public class DeliveryService {
         //TODO zwróć ostatnią pozycję na liście czas najświeższy
         final StatusChange statusChange = statusChangeList.get(statusChangeList.size() - 1);
         statusChange.getStatusChangeTimeStamp();
+    }
+
+    public List<DeliveryDto> findActiveDeliversUpdatesForDeliver(Deliverer deliverer, List<Delivery> activeDeliveriesFromDatabase) {
+        if (CollectionUtils.isEmpty(activeDeliveriesFromDatabase)) {
+            log.debug("No active deliveries from {}. Deliveries from this deliverer won't be updated.", deliverer);
+            return Collections.emptyList();
+        }
+        log.info("Start updating {} deliveries.", deliverer);
+        final List<DeliveryDto> deliveryDtoList = new ArrayList<>();// będzie mieć statusy delivera
+        log.debug("Active {} deliveries: {}.", deliverer, activeDeliveriesFromDatabase);
+        activeDeliveriesFromDatabase.stream()
+                .filter(Objects::nonNull)
+                .forEach(delivery -> {
+                    log.debug("Found active delivery in database with delivery_number = {}", delivery.getDeliveryNumber());
+                    final String json = HttpCaller.callersMap
+                            .get(deliverer)
+                            .apply(
+                                    HttpCaller.endpointUrlsMap.get(deliverer), delivery.getDeliveryNumber()
+                            );
+                    final DeliveryDto deliveryDto = gsonsMap.get(deliverer).fromJson(json, DeliveryDto.class);
+                    deliveryDto.setDeliveryId(delivery.getDeliveryId());//TODO, czy koniecznie potrzebne?? ; jednak wygodnie jak ma - do wyszukiwania w tabeli historia - nie trzeba przekazywać osobno tej liczby
+                    deliveryDtoList.add(deliveryDto);
+                });
+        return deliveryDtoList;
+    }
+
+    private Gson initGson(JsonDeserializer<DeliveryDto> jsonDeserializer) {
+        return new GsonBuilder()
+                .registerTypeAdapter(DeliveryDto.class, jsonDeserializer)
+                .setPrettyPrinting()
+                .disableHtmlEscaping()
+                .create();
     }
 }

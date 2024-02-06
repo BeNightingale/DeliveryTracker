@@ -34,10 +34,10 @@
         </style>
         <style>
             .truncate-cell {
-                max-width: 10px;
+                max-width: 150px;
                 white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
+                overflow: hidden !important;
+                text-overflow: ellipsis !important;
                 cursor: pointer;
             }
         </style>
@@ -52,22 +52,26 @@
             <br>
             <H2 class="position-absolute top-10 start-50 translate-middle">Deliveries</H2>
             <br>
-            <div class="fas" style='font-size:24px'>&#xf6be;</div>
+            <br>
+            <div class="fas position-absolute top-10 start-50 translate-middle" style='font-size:24px'>&#xf6be;</div>
 <%--            <button type="button" class="btn btn-primary btn-lg" role="button" data-bs-toggle="button" aria-pressed="true">Add new delivery to track</button>--%>
             <br>
+
             <div class="d-grid gap-2 col-4 mx-auto">
             <!-- Button trigger modal -->
-            <button type="button" class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#my">
+            <button type="button" class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#addDeliveryModal">
                 Add new delivery to track
             </button>
+            <button class="btn btn-primary btn-lg refreshBtn">Refresh</button>
+            <button class="btn btn-primary btn-lg"><a class="nav-link" href="${pageContext.request.contextPath}/updates" role="button">Update</a></button>
             </div>
 
             <!-- Modal -->
-            <div class="modal fade" id="my" tabindex="-1" aria-labelledby="myLabel" aria-hidden="true">
+            <div class="modal fade" id="addDeliveryModal" tabindex="-1" aria-labelledby="addDeliveryModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content">
                         <div class="modal-header bg-primary-subtle">
-                            <h1 class="modal-title fs-5 fw-bold" id="myLabel">Add new delivery to track</h1>
+                            <h1 class="modal-title fs-5 fw-bold" id="addDeliveryModalLabel">Add new delivery to track</h1>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
@@ -114,7 +118,6 @@
                     <th scope="col">no</th>
                     <th scope="col" class="number-col">Delivery number</th>
                     <th scope="col">Delivery description</th>
-                    <th scope="col"></th>
                     <th scope="col">Deliverer</th>
                     <th scope="col">Status</th>
                     <th scope="col">Last status change date</th>
@@ -127,42 +130,12 @@
                             <% i+=1;%>
                             <td><a class="nav-link" href="${pageContext.request.contextPath}/delivery?deliveryId=${delivery.deliveryId}"><%=i%></a></td>
                             <td class="col-1 text-truncate"><a class="nav-link" href="${pageContext.request.contextPath}/delivery?deliveryId=${delivery.deliveryId}">${delivery.deliveryNumber}</a></td>
-                            <td class="truncate-cell" data-toggle="tooltip" data-placement="top" title="${delivery.deliveryDescription}"><a class="nav-link" href="${pageContext.request.contextPath}/delivery?deliveryId=${delivery.deliveryId}">${delivery.deliveryDescription}</a></td>
-                            <td></td>
+                            <td><div class="truncate-cell" data-toggle="tooltip" data-placement="top" title="${delivery.deliveryDescription}"><a class="nav-link" href="${pageContext.request.contextPath}/delivery?deliveryId=${delivery.deliveryId}">${delivery.deliveryDescription}</a></div></td>
                             <td><a class="nav-link" href="${pageContext.request.contextPath}/delivery?deliveryId=${delivery.deliveryId}">${delivery.deliverer}</a></td>
                             <td><a class="nav-link" href="${pageContext.request.contextPath}/delivery?deliveryId=${delivery.deliveryId}">${delivery.deliveryStatus}</a></td>
                             <td><a class="nav-link" href="${pageContext.request.contextPath}/delivery?deliveryId=${delivery.deliveryId}">${delivery.statusChangeDatetime}</a></td>
-<%--                            <td><a class="nav-link btn bi-trash3" href="${pageContext.request.contextPath}/deleting?deliveryId=${delivery.deliveryId}" role="button" data-toggle="tooltip" data-placement="top" title="Delete delivery"></a></td>--%>
                             <td>
-                                <button class="btn bi-trash3 deleteBtn" data-delivery-id="${delivery.deliveryId}" data-bs-toggle="modal" data-bs-target="#deleteModal" data-toggle="tooltip" data-placement="top" title="Delete delivery"></button>
-                            </td>
-                            <td><div>
-                                <!-- Button trigger modal -->
-<%--                                <a class="btn bi-trash3" data-bs-toggle="modal" data-delivery-id="${delivery.deliveryId}" data-bs-target="#exampleModal" role="button" data-toggle="tooltip" data-placement="top" title="Delete delivery">--%>
-<%--                                </a>--%>
-                                </div>
-
-                                <!-- Modal -->
-                                <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                    <div class="modal-dialog">
-                                        <div class="modal-content">
-                                            <div class="modal-header bg-primary-subtle">
-                                                <h5 class="modal-title" id="exampleModalLabel">Are you sure you want to delete this delivery?</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body">
-
-                                                <div>Delivery number:${delivery.deliveryNumber}</div>
-                                                <div>Deliverer:${delivery.deliverer}</div>
-                                            </div>
-
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                                <a class="nav-link btn btn-primary" href="${pageContext.request.contextPath}/deleting?deliveryId=${delivery.deliveryId}" role="button">Delete this delivery</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                                <button class="btn bi-trash3 deleteBtn" data-delivery-id="${delivery.deliveryId}" data-delivery-number="${delivery.deliveryNumber}" data-delivery-description="${delivery.deliveryDescription}" data-delivery-status="${delivery.deliveryStatus}" data-bs-toggle="modal" data-bs-target="#deleteModal" data-toggle="tooltip" data-placement="top" title="Delete delivery"></button>
                             </td>
 <%--                            <td><a class="nav-link btn bi-trash3" href="${pageContext.request.contextPath}/deleting?deliveryId=${delivery.deliveryId}" role="button" data-toggle="tooltip" data-placement="top" title="Delete delivery"></a></td>--%>
                         </tr>
@@ -170,12 +143,15 @@
                      <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
                          <div class="modal-dialog">
                              <div class="modal-content">
-                                 <div class="modal-header">
-                                     <h5 class="modal-title" id="deleteModalLabel">Delete delivery</h5>
+                                 <div class="modal-header bg-primary-subtle">
+                                     <h5 class="modal-title fs-5 fw-bold" id="deleteModalLabel">Delete delivery</h5>
                                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                  </div>
                                  <div class="modal-body">
-                                     Are you sure you want to delete the book with ID <span id="deliveryIdToDelete"></span>?
+                                     <p>Are you sure you want to delete the delivery with id <span id="deliveryIdToDelete"></span>?</p>
+                                     <p>The delivery number: <span id="deliveryNumberToDelete"></span>.</p>
+                                     <p>The delivery description: <span id="deliveryDescriptionToDelete"></span>.</p>
+                                     <p>The delivery status: <span id="deliveryStatusToDelete"></span>.</p>
                                  </div>
                                  <div class="modal-footer">
                                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -184,19 +160,20 @@
                              </div>
                          </div>
                      </div>
-                     <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+                     <div class="modal fade" id="successDeleteModal" tabindex="-1" aria-labelledby="successDeleteModalLabel" aria-hidden="true">
                          <div class="modal-dialog">
                              <div class="modal-content">
                                  <div class="modal-header bg-success-subtle">
-                                     <h5 class="modal-title fs-5 fw-bold" id="successModalLabel">Deletion successful</h5>
+                                     <h5 class="modal-title fs-5 fw-bold" id="successDeleteModalLabel">Deletion successful</h5>
                                      <br>
-                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                     <button type="button" class="btn btn-close refreshBtn" data-bs-dismiss="modal" aria-label="Close"></button>
                                  </div>
                                  <div class="modal-body bg-success p-2 text-dark bg-opacity-10">
                                      <span class="fw-bold" id="successMessage"></span>
                                  </div>
                                  <div class="modal-footer">
-                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+<%--                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><a class="nav-link" href="${pageContext.request.contextPath}/deliver" role="button">Close</a></button>--%>
+                                        <button type="button" class="btn btn-secondary refreshBtn" data-bs-dismiss="modal">Close</button>
                                  </div>
                              </div>
                          </div>
@@ -205,28 +182,49 @@
                     <script>
                         $('.deleteBtn').on('click', function () {
                             var deliveryId = $(this).data('delivery-id');
+                            var deliveryNumber = $(this).data('delivery-number');
+                            var deliveryDescription = $(this).data('delivery-description');
+                            var deliveryStatus = $(this).data('delivery-status');
                             $('#deliveryIdToDelete').text(deliveryId);
+                            $('#deliveryNumberToDelete').text(deliveryNumber);
+                            $('#deliveryDescriptionToDelete').text(deliveryDescription);
+                            $('#deliveryStatusToDelete').text(deliveryStatus);
                             $('#deleteModal').modal('show');
                         });
 
                         function deleteDelivery() {
                             var deliveryId = $('#deliveryIdToDelete').text();
+                            var deliveryNumber = $('#deliveryNumberToDelete').text();
                             // Now you can use AJAX or any method to send the bookId to your delete endpoint
                             // and handle the deletion in your controller.
                             // Example AJAX call:
                              $.ajax({
-                                 type: "GET",
-                                 url: "${pageContext.request.contextPath}/deleting?deliveryId=" + deliveryId,
+                                 type: "POST",
+                                 url: "${pageContext.request.contextPath}/deletions?deliveryId=" + deliveryId,
                                  success: function () {
-                                     $('#successModal').modal('show');
-                                     $('#successMessage').text('A delivery with deliveryId ' + deliveryId + ' was deleted.');
+                                     $('#successDeleteModal').modal('show');
+                                     $('#successMessage').text(
+                                         'The delivery with deliveryId ' + deliveryId + ' was deleted.' +
+                                         '\nThe delivery number: ' + deliveryNumber + '.');
                                      $('#deleteModal').modal('hide');
                                  }
                             //     error: function () {
                             //         // Handle error
                             //     }
-                             });
-                        }
+                        })}
+                    </script>
+                    <script>
+                        $('.refreshBtn').on('click', function () {
+                            refresh();
+                        });
+                        function refresh() {
+                            $.ajax({
+                                type: "GET",
+                                url: "${pageContext.request.contextPath}/deliver",
+                                success: function() {
+                                    location.reload(); // Refresh the page after the AJAX call is successful
+                                },
+                            })}
                     </script>
             </table>
             <ul class="pagination justify-content-end">

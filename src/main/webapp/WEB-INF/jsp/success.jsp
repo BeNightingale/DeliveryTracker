@@ -14,5 +14,6 @@
     </head>
     <body>
         <p>success</p>
+        <div>${rowsChanged}</div>
     </body>
 </html>
