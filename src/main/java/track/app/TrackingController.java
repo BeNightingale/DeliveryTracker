@@ -1,8 +1,10 @@
 package track.app;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.tomcat.util.codec.binary.StringUtils;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -11,9 +13,11 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.LocaleResolver;
 import track.app.mapper.InPostStatusMapper;
+import track.app.model.Deliverer;
 import track.app.model.Delivery;
 import track.app.model.History;
 import track.app.model.dto.DeliveryDto;
@@ -21,6 +25,7 @@ import track.app.repository.DeliveryRepository;
 import track.app.repository.HistoryRepository;
 import track.app.service.DeliveryService;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -69,8 +74,8 @@ public class TrackingController {
         return "delivery";
     }
 
-    @GetMapping("/add")
-    public String addDelivery(ModelMap model, @Validated DeliveryDto deliveryDto, Errors errors, HttpServletRequest httpRequest) {
+    @PostMapping(value = "/add", consumes = "application/json")
+    public String addDelivery(ModelMap model, @Validated @RequestBody DeliveryDto deliveryDto, Errors errors, HttpServletRequest httpRequest, HttpServletResponse httpServletResponse) throws IOException {
         try {
             log.error("DeliveryDto={}", deliveryDto);
             Locale locale = localeResolver.resolveLocale(httpRequest);
@@ -81,18 +86,21 @@ public class TrackingController {
                 log.error("Lista błędów {}", errors.getAllErrors());
                 final String message = errors.getAllErrors().stream()
                         .map(oe -> messageSource.getMessage(Objects.requireNonNull(oe.getCode()), oe.getArguments(), locale))
-                        .reduce("errors:\n", (accu, error) -> accu + error + "\n");
-                model.addAttribute("message", message);
-                return ERROR;
+                        .reduce("", (accu, error) -> String.format("%s%s%n", accu, error));
+                httpServletResponse.sendError(400, message);
+                log.error("message z propertisów: " + message);
+                return "deliveryList";
             }
+            final  String deliveryNumber = deliveryDto.getDeliveryNumber();
+            final Deliverer deliverer = deliveryDto.getDeliverer();
             final Delivery deliveriesWithNumber = deliveryRepository.findDeliveryByDeliveryNumberAndDeliverer(
-                    deliveryDto.getDeliveryNumber(), deliveryDto.getDeliverer());
+                    deliveryNumber, deliverer);
             if (deliveriesWithNumber != null) {
                 log.error("Delivery cannot be inserted into database because there is already {} delivery with this number in database.",
                         deliveryDto.getDeliverer());
-                model.addAttribute("message", String.format("Delivery cannot be inserted into database because there is already %s delivery with this number in database.",
-                        deliveryDto.getDeliverer()));
-                return ERROR;
+                httpServletResponse.sendError(400, String.format("Delivery cannot be inserted into database because there is already %s delivery with number %s in database.",
+                        deliverer, deliveryNumber));
+                return "deliveryList";
             }
             // Jeśli nie ma, to wpisujemy do bazy danych.
             final DeliveryDto deliveryDto1 = DeliveryDto
@@ -111,10 +119,12 @@ public class TrackingController {
             final History history = historyRepository.save(History.createHistoryFromDelivery(delivery));
             model.addAttribute("history", history);
             log.error("History event inserted into database table 'history': {}.", history);
-            return "success";
+            return "deliveryList";
         } catch (Exception ex) {
+            log.error("Error: ", ex);
             log.error("No success in setting information about delivery with deliveryNumber = {} in database.", deliveryDto.getDeliveryNumber());
-            return ERROR;
+            httpServletResponse.sendError(400, String.format("No success in setting information about delivery with deliveryNumber = %s in database.", deliveryDto.getDeliveryNumber()));
+            return "deliveryList";
         }
     }
 
