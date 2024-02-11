@@ -242,7 +242,7 @@
                 }
                 $.ajax({
                     type: "POST",
-                    url: "${pageContext.request.contextPath}/add",
+                    url: "${pageContext.request.contextPath}/inserts",
                     data: JSON.stringify(deliveryDto),
                     contentType:"application/json",
                     success: function () {
