@@ -32,7 +32,7 @@ public class DeliveryDto {
     private Deliverer deliverer;
     @Size(max = 200)
     private String deliveryDescription;
-    private LocalDateTime thisStatusChangeDateTime;
+    private LocalDateTime statusChangeDateTime;
     private Boolean finished;
     private List<StatusChange> statusChangesList;
 
@@ -47,7 +47,7 @@ public class DeliveryDto {
                                 .get(this.deliverer)
                                 .apply(this.deliveryStatus));
         delivery.setStatusDescription(this.statusDescription);
-        delivery.setStatusChangeDatetime(this.thisStatusChangeDateTime);
+        delivery.setStatusChangeDatetime(this.statusChangeDateTime);
         delivery.setDeliverer(this.deliverer);
         delivery.setDeliveryDescription(this.deliveryDescription);
         delivery.setFinished(this.finished);

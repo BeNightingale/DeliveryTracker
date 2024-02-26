@@ -34,7 +34,4 @@ public interface DeliveryRepository extends JpaRepository<Delivery, Integer> {
 
     @Transactional
     int deleteByDeliveryId(int id);
-
-//    @Transactional
-//    Delivery save(@NonNull Delivery delivery);
 }

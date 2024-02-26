@@ -55,16 +55,42 @@
             <br>
             <div class="fas position-absolute top-10 start-50 translate-middle" style='font-size:24px'>&#xf6be;</div>
             <br>
-            <div class="d-grid gap-2 col-4 mx-auto">
-                <button type="button" class="btn btn-primary btn-lg addDeliveryBtn" data-bs-toggle="modal" data-bs-target="#addDeliveryModal" aria-pressed="true">
-                    Add new delivery to track
-                </button>
-                <button class="btn btn-primary btn-lg refreshBtn">Refresh</button>
-                <button class="btn btn-primary btn-lg"><a class="nav-link" href="${pageContext.request.contextPath}/updates" role="button">Update</a></button>
+            <div class="container">
+                <div class="row row-cols-3 mx-auto">
+                    <div class="col">
+                        <div style="padding: 0px 70px;">
+                        <button class="btn btn-primary btn-lg refreshBtn" style="width: 270px">Refresh page</button>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div style="padding: 0px 70px;">
+                        <button type="button" class="btn btn-primary btn-lg addDeliveryBtn" style="width: 270px" data-bs-toggle="modal" data-bs-target="#addDeliveryModal" aria-pressed="true">
+                            Add new delivery to track
+                        </button>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div style="padding: 0px 70px;">
+                        <button type="button" class="btn btn-primary btn-lg updateDeliveryBtn" style="width: 270px" data-bs-toggle="modal" data-bs-target="#updateDeliveryModal" aria-pressed="true">
+                            Update deliveries
+                        </button>
+                        </div>
+                    </div>
+                </div>
             </div>
+            <br>
+<%--            <div class="d-grid gap-2 col-4 mx-auto">--%>
+<%--                <button type="button" class="btn btn-primary btn-lg addDeliveryBtn" data-bs-toggle="modal" data-bs-target="#addDeliveryModal" aria-pressed="true">--%>
+<%--                    Add new delivery to track--%>
+<%--                </button>--%>
+<%--                <button class="btn btn-primary btn-lg refreshBtn">Refresh</button>--%>
+<%--                <button type="button" class="btn btn-primary btn-lg updateDeliveryBtn" data-bs-toggle="modal" data-bs-target="#updateDeliveryModal" aria-pressed="true">--%>
+<%--                    Update deliveries--%>
+<%--                </button>--%>
+<%--            </div>--%>
 
                 <table class="table table-striped table-hover align-middle caption-top table-light table-responsive-sm" >
-                <caption>List of active deliveries</caption>
+                <caption title="List of deliveries"></caption>
                 <thead class="table-header table-primary">
                 <tr class="bg-primary p-2 text-dark bg-opacity-20">
                     <th scope="col">no</th>
@@ -153,6 +179,44 @@
                                      <span id="successAddDeliveryMessageAboutDeliverer"></span>
                                      <br>
                                      <span id="successAddDeliveryMessageAboutDeliveryDescription"></span>
+                                 </div>
+                                 <div class="modal-footer">
+                                     <button type="button" class="btn btn-secondary refreshBtn" data-bs-dismiss="modal">Close</button>
+                                 </div>
+                             </div>
+                         </div>
+                     </div>
+
+<!-- Modal for updating deliveries -->
+                     <div class="modal fade" id="updateDeliveryModal" tabindex="-1" aria-labelledby="updateDeliveryModalLabel" aria-hidden="true">
+                         <div class="modal-dialog modal-dialog-centered">
+                             <div class="modal-content">
+                                 <div class="modal-header bg-primary-subtle">
+                                     <h1 class="modal-title fs-5 fw-bold" id="updateDeliveryModalLabel">Are you sure you want to update deliveries?</h1>
+                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                 </div>
+                                 <div class="modal-body">
+                                 </div>
+                                 <div class="modal-footer">
+                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                     <button type="button" class="btn btn-primary" form="modal-details" onclick="updateDeliveries()">Confirm update</button>
+                                 </div>
+                             </div>
+                         </div>
+                         <br>
+                     </div>
+
+<!-- Modal for success in updating deliveries -->
+                     <div class="modal fade" id="successUpdateDeliveryModal" tabindex="-1" aria-labelledby="successUpdateDeliveryModalLabel" aria-hidden="true">
+                         <div class="modal-dialog">
+                             <div class="modal-content">
+                                 <div class="modal-header bg-success-subtle">
+                                     <h5 class="modal-title fs-5 fw-bold" id="successUpdateDeliveryModalLabel">Deliveries updated successfully!</h5>
+                                     <br>
+                                     <button type="button" class="btn btn-close refreshBtn" data-bs-dismiss="modal" aria-label="Close"></button>
+                                 </div>
+                                 <div class="modal-body bg-success p-2 text-dark bg-opacity-10">
+                                        <p>The number of updated deliveries: <span id="successRowsChangedNumber"></span>.</p>
                                  </div>
                                  <div class="modal-footer">
                                      <button type="button" class="btn btn-secondary refreshBtn" data-bs-dismiss="modal">Close</button>
@@ -254,6 +318,33 @@
                     },
                     error: function (xhr) {
                         var errorMessage = xhr.responseText;
+                        var parsedErrorMessage = JSON.parse(errorMessage);
+                        alert("Error: " + parsedErrorMessage.message);
+                    }
+                })
+            }
+        </script>
+
+<%-- Updating deliveries --%>
+        <script>
+            $('.updateDeliveryBtn').on('click', function () {
+                $('#updateDeliveryModal').modal('show');
+            });
+
+            function updateDeliveries() {
+                $.ajax({
+                    type: "GET",
+                    url: "${pageContext.request.contextPath}/updates",
+
+                    success: function (response) {
+                        var rowsChanged = response.rowsChanged;
+                        $('#updateDeliveryModal').modal('hide');
+                        $('#successRowsChangedNumber').text(rowsChanged);
+                         $('#successUpdateDeliveryModal').modal('show');
+                    },
+                    error: function (xhr, error) {
+                        var errorMessage = xhr.responseText;
+                    //    var errorMessage = response.errorMessage;
                         var parsedErrorMessage = JSON.parse(errorMessage);
                         alert("Error: " + parsedErrorMessage.message);
                     }

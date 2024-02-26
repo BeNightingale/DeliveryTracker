@@ -68,7 +68,7 @@ public class PolishPostJsonDeserializer implements JsonDeserializer<DeliveryDto>
                 .statusDescription(status)
                 .statusChangesList(statusChangesList)
                 .deliverer(Deliverer.POCZTA_POLSKA)
-                .thisStatusChangeDateTime(thisStatusChangeDateTime)
+                .statusChangeDateTime(thisStatusChangeDateTime)
                 .finished(finished)
                 .build();
     }

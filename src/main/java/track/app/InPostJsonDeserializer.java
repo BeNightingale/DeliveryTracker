@@ -63,7 +63,7 @@ public class InPostJsonDeserializer implements JsonDeserializer<DeliveryDto> {
                 .statusDescription(InPostStatusMapper.inPostShortDescriptionStatusMap.get(status))
                 .statusChangesList(statusChangesList)
                 .deliverer(Deliverer.INPOST)
-                .thisStatusChangeDateTime(thisStatusChangeDateTime)
+                .statusChangeDateTime(thisStatusChangeDateTime)
                 .finished("delivered".equals(status))//TODO, czy może jeszcze inne szczególne sytuacje?
                 .build();
     }

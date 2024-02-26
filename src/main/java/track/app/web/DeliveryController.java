@@ -1,8 +1,5 @@
 package track.app.web;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonDeserializer;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,8 +11,6 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.LocaleResolver;
-import track.app.InPostJsonDeserializer;
-import track.app.PolishPostJsonDeserializer;
 import track.app.mapper.InPostStatusMapper;
 import track.app.model.Deliverer;
 import track.app.model.Delivery;
@@ -108,7 +103,7 @@ public class DeliveryController {
             if (deliveriesWithNumber == null) {
                 // Jeśli nie ma, to wpisujemy do bazy danych.
                 deliveryDto.setDeliveryCreated(LocalDateTime.now());
-                deliveryDto.setThisStatusChangeDateTime(LocalDateTime.now());
+                deliveryDto.setStatusChangeDateTime(LocalDateTime.now());
                 deliveryDto.setFinished(false);
                 final Delivery delivery = deliveryRepository.save(deliveryDto.toDelivery());
                 log.debug("Delivery inserted into database: {}.", delivery);

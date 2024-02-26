@@ -4,8 +4,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.tomcat.util.codec.binary.StringUtils;
 import org.springframework.context.MessageSource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.util.CollectionUtils;
@@ -15,8 +15,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.LocaleResolver;
-import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 import track.app.mapper.InPostStatusMapper;
 import track.app.model.Deliverer;
 import track.app.model.Delivery;
@@ -47,11 +45,12 @@ public class TrackingController {
     private final DeliveryRepository deliveryRepository;
     private final HistoryRepository historyRepository;
     private final DeliveryService deliveryService;
-//    private final LocaleResolver localeResolver;
+    //    private final LocaleResolver localeResolver;
     private final MessageSource messageSource;
 
     //TODO delete, update manually, check if history doesn't repeat, view of success and error, zamykanie modalu przy powrocie(post/get ? przy zmianie strony pomoże?)
     //TODO stronicowanie, sortowanie, zaciąganie pełnej historii, modale dla errorów, modal dla sukcesu updatu
+    //TODO zaciągać messages w jsp-> wiadomości w różnych językach do wyboru na stronie
     @GetMapping("/")
     public String home() {
         return "root";
@@ -92,15 +91,15 @@ public class TrackingController {
                 log.error("message z propertisów: " + message);
                 return DELIVERY_LIST;
             }
-            final  String deliveryNumber = deliveryDto.getDeliveryNumber();
+            final String deliveryNumber = deliveryDto.getDeliveryNumber();
             final Deliverer deliverer = deliveryDto.getDeliverer();
             final Delivery deliveriesWithNumber = deliveryRepository.findDeliveryByDeliveryNumberAndDeliverer(
                     deliveryNumber, deliverer);
             if (deliveriesWithNumber != null) {
                 log.error("The delivery cannot be inserted into the database because there is already {} delivery with " +
-                                "this number in the database.", deliveryDto.getDeliverer());
+                          "this number in the database.", deliveryDto.getDeliverer());
                 httpServletResponse.sendError(400, String.format("The delivery cannot be inserted into the database " +
-                                "because there is already %s delivery with number %s in the database.",
+                                                                 "because there is already %s delivery with number %s in the database.",
                         deliverer, deliveryNumber));
                 return DELIVERY_LIST;
             }
@@ -110,7 +109,7 @@ public class TrackingController {
                     .deliveryNumber(deliveryDto.getDeliveryNumber())
                     .deliverer(deliveryDto.getDeliverer())
                     .deliveryCreated(LocalDateTime.now())
-                    .thisStatusChangeDateTime(LocalDateTime.now())
+                    .statusChangeDateTime(LocalDateTime.now())
                     .deliveryDescription(deliveryDto.getDeliveryDescription())
                     .finished(false)
                     .build();
@@ -127,13 +126,14 @@ public class TrackingController {
             log.error("No success in setting information about the delivery with deliveryNumber = {} in the database.",
                     deliveryDto.getDeliveryNumber());
             httpServletResponse.sendError(400, String.format("No success in setting information about the delivery " +
-                    "with deliveryNumber = %s in the database.", deliveryDto.getDeliveryNumber()));
+                                                             "with deliveryNumber = %s in the database.", deliveryDto.getDeliveryNumber()));
             return DELIVERY_LIST;
         }
     }
 
     /**
      * Endpoint służy do usuwania informacji o przesyłce z tabeli deliveries oraz historii śledzenia zmian jej statusów z tabeli history.
+     *
      * @param deliveryId - identyfikator przesyłki
      * @return - po wykonaniu operacji trigger uruchamia modal z informacją o powodzeniu lub niepowodzeniu usuwania danych
      */
@@ -147,26 +147,34 @@ public class TrackingController {
     }
 
     @GetMapping("/updates") // aktualizuje w bazie statusy wszystkim aktywnym przesyłkom INPOST lub Poczty Polskiej
-    public String getDeliveriesWithActiveStatusesAndUpdate(ModelMap modelMap) {
-        final List<Delivery> inPostActiveDeliveries = deliveryRepository
-                .findByDelivererAndDeliveryStatusIn(INPOST, InPostStatusMapper.getActiveStatusesList());
-        final List<Delivery> polishPostActiveDeliveries = deliveryRepository
-                .findByDelivererAndFinishedIsFalse(POCZTA_POLSKA);
-        int rowsChanged = 0;
-        if (
-                CollectionUtils.isEmpty(inPostActiveDeliveries)
-                &&
-                CollectionUtils.isEmpty(polishPostActiveDeliveries)
-        ) {
-            log.debug("No deliveries with active statuses in database - nothing to update.");
+    public ResponseEntity<ModelMap> getDeliveriesWithActiveStatusesAndUpdate() {
+        final ModelMap modelMap = new ModelMap();
+        try {
+            final List<Delivery> inPostActiveDeliveries = deliveryRepository
+                    .findByDelivererAndDeliveryStatusIn(INPOST, InPostStatusMapper.getActiveStatusesList());
+            final List<Delivery> polishPostActiveDeliveries = deliveryRepository
+                    .findByDelivererAndFinishedIsFalse(POCZTA_POLSKA);
+            int rowsChanged = 0;
+            if (
+                    CollectionUtils.isEmpty(inPostActiveDeliveries)
+                    &&
+                    CollectionUtils.isEmpty(polishPostActiveDeliveries)
+            ) {
+                log.debug("No deliveries with active statuses in database - nothing to update.");
+                modelMap.addAttribute("rowsChanged", rowsChanged);
+                return ResponseEntity.ok().body(modelMap);
+            }
+            final List<DeliveryDto> deliveryDtoList = new ArrayList<>();// będzie mieć statusy delivera
+            deliveryDtoList.addAll(deliveryService.findActiveDeliversUpdatesForDeliver(INPOST, inPostActiveDeliveries));
+            deliveryDtoList.addAll(deliveryService.findActiveDeliversUpdatesForDeliver(POCZTA_POLSKA, polishPostActiveDeliveries));
+            rowsChanged = deliveryService.updateActiveDeliveriesStatuses(deliveryDtoList);
             modelMap.addAttribute("rowsChanged", rowsChanged);
-            return "success";
+            return ResponseEntity.ok(modelMap);
+        } catch (Exception ex) {
+            log.error("No success in getting information from deliverers.", ex);
+            modelMap.addAttribute("errorMessage", ex.getMessage());
+           // return ResponseEntity.internalServerError().body(modelMap);
+            throw ex;
         }
-        final List<DeliveryDto> deliveryDtoList = new ArrayList<>();// będzie mieć statusy delivera
-        deliveryDtoList.addAll(deliveryService.findActiveDeliversUpdatesForDeliver(INPOST, inPostActiveDeliveries));
-        deliveryDtoList.addAll(deliveryService.findActiveDeliversUpdatesForDeliver(POCZTA_POLSKA, polishPostActiveDeliveries));
-        rowsChanged = deliveryService.updateActiveDeliveriesStatuses(deliveryDtoList);
-        modelMap.addAttribute("rowsChanged", rowsChanged);
-        return "success";
     }
 }
