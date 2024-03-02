@@ -53,9 +53,10 @@ public class DeliveryService {
         for (DeliveryDto dto : deliveryDtoList) {
             counter += updateDeliveryStatus(dto);
         }
-        log.error("THis!!!!");
-        throw new RuntimeException("Unexpected error!");
-        //return counter;
+//  Tylko do testów:
+//        log.error("THis!!!!");
+//        throw new RuntimeException("Unexpected error!");
+        return counter;
     }
 
     protected int updateDeliveryStatus(DeliveryDto deliveryDto) {

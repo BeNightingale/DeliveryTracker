@@ -1,4 +1,3 @@
-<%--  User: beatakazmierczak--%>
 <%--  Date: 23/01/2024--%>
 <%--  Time: 21:12--%>
 <%--  To change this template use File | Settings | File Templates.--%>
@@ -88,18 +87,17 @@
 <%--                    Update deliveries--%>
 <%--                </button>--%>
 <%--            </div>--%>
-
                 <table class="table table-striped table-hover align-middle caption-top table-light table-responsive-sm" >
                 <caption title="List of deliveries"></caption>
                 <thead class="table-header table-primary">
                 <tr class="bg-primary p-2 text-dark bg-opacity-20">
-                    <th scope="col">no</th>
-                    <th scope="col" class="number-col">Delivery number</th>
-                    <th scope="col">Delivery description</th>
-                    <th scope="col">Deliverer</th>
-                    <th scope="col">Status</th>
-                    <th scope="col">Last status change date</th>
-                    <th scope="col"></th>
+                    <th scope="col" style="width: 50px">no</th>
+                    <th scope="col" style="width: 100px">Delivery number</th>
+                    <th scope="col" style="width: 200px">Delivery description</th>
+                    <th scope="col" style="width: 150px">Deliverer</th>
+                    <th scope="col" style="width: 160px">Status</th>
+                    <th scope="col" style="width: 180px">Last status change date</th>
+                    <th scope="col" style="width: 70px"></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -107,13 +105,20 @@
                         <tr>
                             <% i+=1;%>
                             <td><a class="nav-link" href="${pageContext.request.contextPath}/delivery?deliveryId=${delivery.deliveryId}"><%=i%></a></td>
-                            <td class="col-1 text-truncate"><a class="nav-link" href="${pageContext.request.contextPath}/delivery?deliveryId=${delivery.deliveryId}">${delivery.deliveryNumber}</a></td>
+                            <td><a class="nav-link" href="${pageContext.request.contextPath}/delivery?deliveryId=${delivery.deliveryId}">${delivery.deliveryNumber}</a></td>
                             <td><div class="truncate-cell" data-toggle="tooltip" data-placement="top" title="${delivery.deliveryDescription}"><a class="nav-link" href="${pageContext.request.contextPath}/delivery?deliveryId=${delivery.deliveryId}">${delivery.deliveryDescription}</a></div></td>
                             <td><a class="nav-link" href="${pageContext.request.contextPath}/delivery?deliveryId=${delivery.deliveryId}">${delivery.deliverer}</a></td>
-                            <td><a class="nav-link" href="${pageContext.request.contextPath}/delivery?deliveryId=${delivery.deliveryId}">${delivery.deliveryStatus}</a></td>
+                            <td><a class="nav-link" href="${pageContext.request.contextPath}/delivery?deliveryId=${delivery.deliveryId}">${delivery.deliveryStatus}<span style="white-space: pre;">  </span>
+                                <c:choose>
+                                    <c:when test="${delivery.finished=='true'}">
+                                        <i class="bi bi-check-circle-fill" style="color: forestgreen"></i>
+                                        <i class="bi bi-house-check-fill" style="color: forestgreen"></i>
+                                    </c:when>
+                                </c:choose>
+                            </a></td>
                             <td><a class="nav-link" href="${pageContext.request.contextPath}/delivery?deliveryId=${delivery.deliveryId}">${delivery.statusChangeDatetime}</a></td>
                             <td>
-                                <button class="btn bi-trash3 deleteBtn" data-delivery-id="${delivery.deliveryId}" data-delivery-number="${delivery.deliveryNumber}" data-delivery-description="${delivery.deliveryDescription}" data-delivery-status="${delivery.deliveryStatus}" data-delivery-deliverer="${delivery.deliverer}" data-bs-toggle="modal" data-bs-target="#deleteModal" data-toggle="tooltip" data-placement="top" title="Delete delivery"></button>
+                                <button class="btn bi-trash3 deleteBtn" style="color: darkorange" data-delivery-id="${delivery.deliveryId}" data-delivery-number="${delivery.deliveryNumber}" data-delivery-description="${delivery.deliveryDescription}" data-delivery-status="${delivery.deliveryStatus}" data-delivery-deliverer="${delivery.deliverer}" data-bs-toggle="modal" data-bs-target="#deleteModal" data-toggle="tooltip" data-placement="top" title="Delete delivery"></button>
                             </td>
                         </tr>
                     </c:forEach>
