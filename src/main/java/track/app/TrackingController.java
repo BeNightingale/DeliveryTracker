@@ -64,6 +64,10 @@ public class TrackingController {
 
     @GetMapping("/deliver")
     public String getDeliveries(ModelMap modelMap) {
+//        Pageable pageable = PageRequest.of(2, 10, Sort.by("statusChangeDatetime").descending());
+//        Page<Delivery> page = deliveryRepository.findAll(pageable);
+//        List<Delivery> list = page.stream().toList();
+//        modelMap.addAttribute("deliveries",  list);
         modelMap.addAttribute("deliveries", deliveryRepository.findAll().stream().toList());
         return DELIVERY_LIST;
     }

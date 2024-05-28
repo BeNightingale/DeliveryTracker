@@ -14,6 +14,11 @@
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" />
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<%--        <script type="text/javascript" src="http://cdn.datatables.net/1.12.0/js/jquery.dataTables.min.js"></script>--%>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+        <script type="text/javascript" src=https://code.jquery.com/jquery-3.7.1.js></script>
+        <script src="https://cdn.datatables.net/2.0.1/js/dataTables.js"></script>
+        <script src="https://cdn.datatables.net/2.0.1/js/dataTables.bootstrap5.js"></script>
         <script>
             $(document).ready(function(){
                 $('[data-toggle="tooltip"]').tooltip();
@@ -87,18 +92,18 @@
 <%--                    Update deliveries--%>
 <%--                </button>--%>
 <%--            </div>--%>
-                <table class="table table-striped table-hover align-middle caption-top table-light table-responsive-sm" >
+                <table id="deliveriesTable" class="table table-striped table-hover align-middle caption-top table-light table-responsive-sm" >
                 <caption title="List of deliveries"></caption>
                 <thead class="table-header table-primary">
-                <tr class="bg-primary p-2 text-dark bg-opacity-20">
-                    <th scope="col" style="width: 50px">no</th>
-                    <th scope="col" style="width: 100px">Delivery number</th>
-                    <th scope="col" style="width: 200px">Delivery description</th>
-                    <th scope="col" style="width: 150px">Deliverer</th>
-                    <th scope="col" style="width: 160px">Status</th>
-                    <th scope="col" style="width: 180px">Last status change date</th>
-                    <th scope="col" style="width: 70px"></th>
-                </tr>
+                    <tr class="bg-primary p-2 text-dark bg-opacity-20">
+                        <th scope="col" style="width: 50px">no</th>
+                        <th scope="col" style="width: 100px">Delivery number</th>
+                        <th scope="col" style="width: 200px">Delivery description</th>
+                        <th scope="col" style="width: 150px">Deliverer</th>
+                        <th scope="col" style="width: 160px">Status</th>
+                        <th scope="col" style="width: 180px">Last status change date</th>
+                        <th scope="col" style="width: 70px"></th>
+                    </tr>
                 </thead>
                 <tbody>
                      <c:forEach var="delivery" items="${deliveries}">
@@ -417,6 +422,11 @@
                     },
                 })}
         </script>
-
+<%-- Paging--%>
+<%--        <script>--%>
+<%--            $(document).ready(function(){--%>
+<%--                $('#deliveriesTable').DataTable();--%>
+<%--            });--%>
+<%--        </script>--%>
     </body>
 </html>
