@@ -14,9 +14,19 @@
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" />
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<%-- The 2 lines below enable using dataTable for sorting, paging, searching in table.--%>
+        <link rel="stylesheet" href="https://cdn.datatables.net/2.0.8/css/dataTables.dataTables.min.css">
+        <script type="text/javascript" src="https://cdn.datatables.net/2.0.8/js/dataTables.min.js"></script>
+
         <script>
             $(document).ready(function(){
                 $('[data-toggle="tooltip"]').tooltip();
+            });
+        </script>
+<%-- The function below enables sorting, paging, searching in table.--%>
+        <script>
+            $(document).ready(function() {
+                $('#myTable').dataTable();
             });
         </script>
         <style>
@@ -87,203 +97,198 @@
 <%--                    Update deliveries--%>
 <%--                </button>--%>
 <%--            </div>--%>
-                <table class="table table-striped table-hover align-middle caption-top table-light table-responsive-sm" >
-                <caption title="List of deliveries"></caption>
-                <thead class="table-header table-primary">
-                <tr class="bg-primary p-2 text-dark bg-opacity-20">
-                    <th scope="col" style="width: 50px">no</th>
-                    <th scope="col" style="width: 100px">Delivery number</th>
-                    <th scope="col" style="width: 200px">Delivery description</th>
-                    <th scope="col" style="width: 150px">Deliverer</th>
-                    <th scope="col" style="width: 160px">Status</th>
-                    <th scope="col" style="width: 180px">Last status change date</th>
-                    <th scope="col" style="width: 70px"></th>
-                </tr>
-                </thead>
-                <tbody>
-                     <c:forEach var="delivery" items="${deliveries}">
-                        <tr>
-                            <% i+=1;%>
-                            <td><a class="nav-link" href="${pageContext.request.contextPath}/delivery?deliveryId=${delivery.deliveryId}"><%=i%></a></td>
-                            <td><a class="nav-link" href="${pageContext.request.contextPath}/delivery?deliveryId=${delivery.deliveryId}">${delivery.deliveryNumber}</a></td>
-                            <td><div class="truncate-cell" data-toggle="tooltip" data-placement="top" title="${delivery.deliveryDescription}"><a class="nav-link" href="${pageContext.request.contextPath}/delivery?deliveryId=${delivery.deliveryId}">${delivery.deliveryDescription}</a></div></td>
-                            <td><a class="nav-link" href="${pageContext.request.contextPath}/delivery?deliveryId=${delivery.deliveryId}">${delivery.deliverer}</a></td>
-                            <td><a class="nav-link" href="${pageContext.request.contextPath}/delivery?deliveryId=${delivery.deliveryId}">${delivery.deliveryStatus}<span style="white-space: pre;">  </span>
-                                <c:choose>
-                                    <c:when test="${delivery.finished=='true'}">
-                                        <i class="bi bi-check-circle-fill" style="color: forestgreen"></i>
-                                        <i class="bi bi-house-check-fill" style="color: forestgreen"></i>
-                                    </c:when>
-                                </c:choose>
-                            </a></td>
-                            <td><a class="nav-link" href="${pageContext.request.contextPath}/delivery?deliveryId=${delivery.deliveryId}">${delivery.statusChangeDatetime}</a></td>
-                            <td>
-                                <button class="btn bi-trash3 deleteBtn" style="color: darkorange" data-delivery-id="${delivery.deliveryId}" data-delivery-number="${delivery.deliveryNumber}" data-delivery-description="${delivery.deliveryDescription}" data-delivery-status="${delivery.deliveryStatus}" data-delivery-deliverer="${delivery.deliverer}" data-bs-toggle="modal" data-bs-target="#deleteModal" data-toggle="tooltip" data-placement="top" title="Delete delivery"></button>
-                            </td>
-                        </tr>
-                    </c:forEach>
+            <div class="table-responsive">
+                <table id="myTable" class="display table table-striped table-hover align-middle caption-top table-light table-responsive-sm" >
+                    <caption title="List of deliveries"></caption>
+                    <thead class="table-header table-primary">
+                    <tr class="bg-primary p-2 text-dark bg-opacity-20">
+                        <th scope="col" style="width: 50px">no</th>
+                        <th scope="col" style="width: 100px">Delivery number</th>
+                        <th scope="col" style="width: 200px">Delivery description</th>
+                        <th scope="col" style="width: 150px">Deliverer</th>
+                        <th scope="col" style="width: 160px">Status</th>
+                        <th scope="col" style="width: 180px">Last status change date</th>
+                        <th scope="col" style="width: 70px"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                         <c:forEach var="delivery" items="${deliveries}">
+                            <tr>
+                                <% i+=1;%>
+                                <td><a class="nav-link" href="${pageContext.request.contextPath}/delivery?deliveryId=${delivery.deliveryId}"><%=i%></a></td>
+                                <td><a class="nav-link" href="${pageContext.request.contextPath}/delivery?deliveryId=${delivery.deliveryId}">${delivery.deliveryNumber}</a></td>
+                                <td><div class="truncate-cell" data-toggle="tooltip" data-placement="top" title="${delivery.deliveryDescription}"><a class="nav-link" href="${pageContext.request.contextPath}/delivery?deliveryId=${delivery.deliveryId}">${delivery.deliveryDescription}</a></div></td>
+                                <td><a class="nav-link" href="${pageContext.request.contextPath}/delivery?deliveryId=${delivery.deliveryId}">${delivery.deliverer}</a></td>
+                                <td><a class="nav-link" href="${pageContext.request.contextPath}/delivery?deliveryId=${delivery.deliveryId}">${delivery.deliveryStatus}<span style="white-space: pre;">  </span>
+                                    <c:choose>
+                                        <c:when test="${delivery.finished=='true'}">
+                                            <i class="bi bi-check-circle-fill" style="color: forestgreen"></i>
+                                            <i class="bi bi-house-check-fill" style="color: forestgreen"></i>
+                                        </c:when>
+                                    </c:choose>
+                                </a></td>
+                                <td><a class="nav-link" href="${pageContext.request.contextPath}/delivery?deliveryId=${delivery.deliveryId}">${delivery.statusChangeDatetime}</a></td>
+                                <td>
+                                    <button class="btn bi-trash3 deleteBtn" style="color: darkorange" data-delivery-id="${delivery.deliveryId}" data-delivery-number="${delivery.deliveryNumber}" data-delivery-description="${delivery.deliveryDescription}" data-delivery-status="${delivery.deliveryStatus}" data-delivery-deliverer="${delivery.deliverer}" data-bs-toggle="modal" data-bs-target="#deleteModal" data-toggle="tooltip" data-placement="top" title="Delete delivery"></button>
+                                </td>
+                            </tr>
+                        </c:forEach>
 
-                                            <%-- MODALS --%>
+                                                <%-- MODALS --%>
 
-<!-- Modal for adding deliveries -->
-                     <div class="modal fade" id="addDeliveryModal" tabindex="-1" aria-labelledby="addDeliveryModalLabel" aria-hidden="true">
-                         <div class="modal-dialog modal-dialog-centered">
-                             <div class="modal-content">
-                                 <div class="modal-header bg-primary-subtle">
-                                     <h1 class="modal-title fs-5 fw-bold" id="addDeliveryModalLabel">Add new delivery to track</h1>
-                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                 </div>
-                                 <div class="modal-body">
-                                     <form id="modal-details">
-                                         <p>Insert delivery information data:</p>
-                                         <div class="mb-3">
-                                             <label for="deliveryNumber" class="form-label fw-semibold">Delivery number</label>
-                                             <input type="text" class="form-control bg-primary p-2 text-dark bg-opacity-10" id="deliveryNumber" required aria-describedby="numberHelp" name="deliveryNumber">
-                                             <div id="numberHelp" class="form-text">We'll never share your number with anyone else.</div>
-                                         </div>
-                                         <br>
-                                         <div class="mb-3">
-                                             <label for="deliverer" class="form-label fw-semibold">Deliverer</label>
-                                             <select class="form-select form-select-lg mb-2 bg-primary p-2 text-dark bg-opacity-10" id="deliverer" required aria-label="Large select example" name="deliverer">
-                                                 <option value="INPOST">INPOST</option>
-                                                 <option value="POCZTA_POLSKA">POCZTA POLSKA</option>
-                                                 <option value="DPD">DPD</option>
-                                                 <option value="DHL">DHL</option>
-                                             </select>
+    <!-- Modal for adding deliveries -->
+                         <div class="modal fade" id="addDeliveryModal" tabindex="-1" aria-labelledby="addDeliveryModalLabel" aria-hidden="true">
+                             <div class="modal-dialog modal-dialog-centered">
+                                 <div class="modal-content">
+                                     <div class="modal-header bg-primary-subtle">
+                                         <h1 class="modal-title fs-5 fw-bold" id="addDeliveryModalLabel">Add new delivery to track</h1>
+                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                     </div>
+                                     <div class="modal-body">
+                                         <form id="modal-details">
+                                             <p>Insert delivery information data:</p>
+                                             <div class="mb-3">
+                                                 <label for="deliveryNumber" class="form-label fw-semibold">Delivery number</label>
+                                                 <input type="text" class="form-control bg-primary p-2 text-dark bg-opacity-10" id="deliveryNumber" required aria-describedby="numberHelp" name="deliveryNumber">
+                                                 <div id="numberHelp" class="form-text">We'll never share your number with anyone else.</div>
+                                             </div>
                                              <br>
-                                         </div>
-                                         <div class="mb-3">
-                                             <label for="deliveryDescription" class="form-label fw-semibold">Delivery description</label>
-                                             <input type="text" class="form-control bg-primary p-2 text-dark bg-opacity-10" id="deliveryDescription" aria-describedby="descriptionHelp" name="deliveryDescription">
-                                             <div id="descriptionHelp" class="form-text">Delivery description shouldn't exceed 200 characters.</div>
-                                         </div>
+                                             <div class="mb-3">
+                                                 <label for="deliverer" class="form-label fw-semibold">Deliverer</label>
+                                                 <select class="form-select form-select-lg mb-2 bg-primary p-2 text-dark bg-opacity-10" id="deliverer" required aria-label="Large select example" name="deliverer">
+                                                     <option value="INPOST">INPOST</option>
+                                                     <option value="POCZTA_POLSKA">POCZTA POLSKA</option>
+                                                     <option value="DPD">DPD</option>
+                                                     <option value="DHL">DHL</option>
+                                                 </select>
+                                                 <br>
+                                             </div>
+                                             <div class="mb-3">
+                                                 <label for="deliveryDescription" class="form-label fw-semibold">Delivery description</label>
+                                                 <input type="text" class="form-control bg-primary p-2 text-dark bg-opacity-10" id="deliveryDescription" aria-describedby="descriptionHelp" name="deliveryDescription">
+                                                 <div id="descriptionHelp" class="form-text">Delivery description shouldn't exceed 200 characters.</div>
+                                             </div>
+                                             <br>
+                                         </form>
+                                     </div>
+                                     <div class="modal-footer">
+                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                         <button type="button" class="btn btn-primary" form="modal-details" onclick="addDelivery()">Save changes</button>
+                                     </div>
+                                 </div>
+                             </div>
+                             <br>
+                         </div>
+
+    <!-- Modal for success in adding deliveries -->
+                         <div class="modal fade" id="successAddDeliveryModal" tabindex="-1" aria-labelledby="successAddDeliveryModalLabel" aria-hidden="true">
+                             <div class="modal-dialog">
+                                 <div class="modal-content">
+                                     <div class="modal-header bg-success-subtle">
+                                         <h5 class="modal-title fs-5 fw-bold" id="successAddDeliveryModalLabel">Delivery added successfully!</h5>
                                          <br>
-                                     </form>
-                                 </div>
-                                 <div class="modal-footer">
-                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                     <button type="button" class="btn btn-primary" form="modal-details" onclick="addDelivery()">Save changes</button>
+                                         <button type="button" class="btn btn-close refreshBtn" data-bs-dismiss="modal" aria-label="Close"></button>
+                                     </div>
+                                     <div class="modal-body bg-success p-2 text-dark bg-opacity-10">
+                                         <span id="successAddDeliveryMessageAboutDeliveryNumber"></span>
+                                         <br>
+                                         <span id="successAddDeliveryMessageAboutDeliverer"></span>
+                                         <br>
+                                         <span id="successAddDeliveryMessageAboutDeliveryDescription"></span>
+                                     </div>
+                                     <div class="modal-footer">
+                                         <button type="button" class="btn btn-secondary refreshBtn" data-bs-dismiss="modal">Close</button>
+                                     </div>
                                  </div>
                              </div>
                          </div>
-                         <br>
-                     </div>
 
-<!-- Modal for success in adding deliveries -->
-                     <div class="modal fade" id="successAddDeliveryModal" tabindex="-1" aria-labelledby="successAddDeliveryModalLabel" aria-hidden="true">
-                         <div class="modal-dialog">
-                             <div class="modal-content">
-                                 <div class="modal-header bg-success-subtle">
-                                     <h5 class="modal-title fs-5 fw-bold" id="successAddDeliveryModalLabel">Delivery added successfully!</h5>
-                                     <br>
-                                     <button type="button" class="btn btn-close refreshBtn" data-bs-dismiss="modal" aria-label="Close"></button>
-                                 </div>
-                                 <div class="modal-body bg-success p-2 text-dark bg-opacity-10">
-                                     <span id="successAddDeliveryMessageAboutDeliveryNumber"></span>
-                                     <br>
-                                     <span id="successAddDeliveryMessageAboutDeliverer"></span>
-                                     <br>
-                                     <span id="successAddDeliveryMessageAboutDeliveryDescription"></span>
-                                 </div>
-                                 <div class="modal-footer">
-                                     <button type="button" class="btn btn-secondary refreshBtn" data-bs-dismiss="modal">Close</button>
+    <!-- Modal for updating deliveries -->
+                         <div class="modal fade" id="updateDeliveryModal" tabindex="-1" aria-labelledby="updateDeliveryModalLabel" aria-hidden="true">
+                             <div class="modal-dialog modal-dialog-centered">
+                                 <div class="modal-content">
+                                     <div class="modal-header bg-primary-subtle">
+                                         <h1 class="modal-title fs-5 fw-bold" id="updateDeliveryModalLabel">Are you sure you want to update deliveries?</h1>
+                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                     </div>
+                                     <div class="modal-body">
+                                     </div>
+                                     <div class="modal-footer">
+                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                         <button type="button" class="btn btn-primary" form="modal-details" onclick="updateDeliveries()">Confirm update</button>
+                                     </div>
                                  </div>
                              </div>
+                             <br>
                          </div>
-                     </div>
 
-<!-- Modal for updating deliveries -->
-                     <div class="modal fade" id="updateDeliveryModal" tabindex="-1" aria-labelledby="updateDeliveryModalLabel" aria-hidden="true">
-                         <div class="modal-dialog modal-dialog-centered">
-                             <div class="modal-content">
-                                 <div class="modal-header bg-primary-subtle">
-                                     <h1 class="modal-title fs-5 fw-bold" id="updateDeliveryModalLabel">Are you sure you want to update deliveries?</h1>
-                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                 </div>
-                                 <div class="modal-body">
-                                 </div>
-                                 <div class="modal-footer">
-                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                     <button type="button" class="btn btn-primary" form="modal-details" onclick="updateDeliveries()">Confirm update</button>
+    <!-- Modal for success in updating deliveries -->
+                         <div class="modal fade" id="successUpdateDeliveryModal" tabindex="-1" aria-labelledby="successUpdateDeliveryModalLabel" aria-hidden="true">
+                             <div class="modal-dialog">
+                                 <div class="modal-content">
+                                     <div class="modal-header bg-success-subtle">
+                                         <h5 class="modal-title fs-5 fw-bold" id="successUpdateDeliveryModalLabel">Deliveries updated successfully!</h5>
+                                         <br>
+                                         <button type="button" class="btn btn-close refreshBtn" data-bs-dismiss="modal" aria-label="Close"></button>
+                                     </div>
+                                     <div class="modal-body bg-success p-2 text-dark bg-opacity-10">
+                                            <p>The number of updated deliveries: <span id="successRowsChangedNumber"></span>.</p>
+                                     </div>
+                                     <div class="modal-footer">
+                                         <button type="button" class="btn btn-secondary refreshBtn" data-bs-dismiss="modal">Close</button>
+                                     </div>
                                  </div>
                              </div>
                          </div>
-                         <br>
-                     </div>
 
-<!-- Modal for success in updating deliveries -->
-                     <div class="modal fade" id="successUpdateDeliveryModal" tabindex="-1" aria-labelledby="successUpdateDeliveryModalLabel" aria-hidden="true">
-                         <div class="modal-dialog">
-                             <div class="modal-content">
-                                 <div class="modal-header bg-success-subtle">
-                                     <h5 class="modal-title fs-5 fw-bold" id="successUpdateDeliveryModalLabel">Deliveries updated successfully!</h5>
-                                     <br>
-                                     <button type="button" class="btn btn-close refreshBtn" data-bs-dismiss="modal" aria-label="Close"></button>
-                                 </div>
-                                 <div class="modal-body bg-success p-2 text-dark bg-opacity-10">
-                                        <p>The number of updated deliveries: <span id="successRowsChangedNumber"></span>.</p>
-                                 </div>
-                                 <div class="modal-footer">
-                                     <button type="button" class="btn btn-secondary refreshBtn" data-bs-dismiss="modal">Close</button>
+    <%-- Modal for deleting deliveries --%>
+                         <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                             <div class="modal-dialog">
+                                 <div class="modal-content">
+                                     <div class="modal-header bg-primary-subtle">
+                                         <h5 class="modal-title fs-5 fw-bold" id="deleteModalLabel">Delete delivery</h5>
+                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                     </div>
+                                     <div class="modal-body">
+                                         <p>Are you sure you want to delete the delivery with id <span id="deliveryIdToDelete"></span>?</p>
+                                         <p>The delivery number: <span id="deliveryNumberToDelete"></span>.</p>
+                                         <p><span id="deleteDeliveryDescriptionMessage"></span></p>
+                                         <p>The delivery status: <span id="deliveryStatusToDelete"></span>.</p>
+                                         <p>The deliverer: <span id="delivererDeliveryToDelete"></span>.</p>
+                                     </div>
+                                     <div class="modal-footer">
+                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                         <button type="button" class="btn btn-danger" onclick="deleteDelivery()">Delete delivery</button>
+                                     </div>
                                  </div>
                              </div>
                          </div>
-                     </div>
 
-<%-- Modal for deleting deliveries --%>
-                     <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-                         <div class="modal-dialog">
-                             <div class="modal-content">
-                                 <div class="modal-header bg-primary-subtle">
-                                     <h5 class="modal-title fs-5 fw-bold" id="deleteModalLabel">Delete delivery</h5>
-                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                 </div>
-                                 <div class="modal-body">
-                                     <p>Are you sure you want to delete the delivery with id <span id="deliveryIdToDelete"></span>?</p>
-                                     <p>The delivery number: <span id="deliveryNumberToDelete"></span>.</p>
-                                     <p><span id="deleteDeliveryDescriptionMessage"></span></p>
-                                     <p>The delivery status: <span id="deliveryStatusToDelete"></span>.</p>
-                                     <p>The deliverer: <span id="delivererDeliveryToDelete"></span>.</p>
-                                 </div>
-                                 <div class="modal-footer">
-                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                     <button type="button" class="btn btn-danger" onclick="deleteDelivery()">Delete delivery</button>
-                                 </div>
-                             </div>
-                         </div>
-                     </div>
-
-<%-- Modal for success in deleting deliveries --%>
-                     <div class="modal fade" id="successDeleteModal" tabindex="-1" aria-labelledby="successDeleteModalLabel" aria-hidden="true">
-                         <div class="modal-dialog">
-                             <div class="modal-content">
-                                 <div class="modal-header bg-success-subtle">
-                                     <h5 class="modal-title fs-5 fw-bold" id="successDeleteModalLabel">Deletion successful</h5>
-                                     <br>
-                                     <button type="button" class="btn btn-close refreshBtn" data-bs-dismiss="modal" aria-label="Close"></button>
-                                 </div>
-                                 <div class="modal-body bg-success p-2 text-dark bg-opacity-10">
-                                     <span id="successDeleteMessageAboutDeliveryId"></span>
-                                     <br>
-                                     <span id="successDeleteMessageAboutDeliveryNumber"></span>
-                                     <br>
-                                     <span id="successDeleteMessageAboutDeliveryDescription"></span>
-                                 </div>
-                                 <div class="modal-footer">
-                                     <button type="button" class="btn btn-secondary refreshBtn" data-bs-dismiss="modal">Close</button>
+    <%-- Modal for success in deleting deliveries --%>
+                         <div class="modal fade" id="successDeleteModal" tabindex="-1" aria-labelledby="successDeleteModalLabel" aria-hidden="true">
+                             <div class="modal-dialog">
+                                 <div class="modal-content">
+                                     <div class="modal-header bg-success-subtle">
+                                         <h5 class="modal-title fs-5 fw-bold" id="successDeleteModalLabel">Deletion successful</h5>
+                                         <br>
+                                         <button type="button" class="btn btn-close refreshBtn" data-bs-dismiss="modal" aria-label="Close"></button>
+                                     </div>
+                                     <div class="modal-body bg-success p-2 text-dark bg-opacity-10">
+                                         <span id="successDeleteMessageAboutDeliveryId"></span>
+                                         <br>
+                                         <span id="successDeleteMessageAboutDeliveryNumber"></span>
+                                         <br>
+                                         <span id="successDeleteMessageAboutDeliveryDescription"></span>
+                                     </div>
+                                     <div class="modal-footer">
+                                         <button type="button" class="btn btn-secondary refreshBtn" data-bs-dismiss="modal">Close</button>
+                                     </div>
                                  </div>
                              </div>
                          </div>
-                     </div>
-                </tbody>
-            </table>
-            <ul class="pagination justify-content-end">
-                <li class="page-item"><a class="page-link" href="#">Previous</a></li>
-                <li class="page-item"><a class="page-link" href="#">1</a></li>
-                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                <li class="page-item"><a class="page-link" href="#">3</a></li>
-                <li class="page-item"><a class="page-link" href="#">Next</a></li>
-            </ul>
+                    </tbody>
+                </table>
+            </div>
         </div>
 
                                             <%-- SCRIPTS --%>
