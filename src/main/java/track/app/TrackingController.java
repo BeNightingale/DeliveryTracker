@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.util.CollectionUtils;
 import org.springframework.validation.Errors;
@@ -51,21 +52,27 @@ public class TrackingController {
     //TODO delete, update manually, check if history doesn't repeat, view of success and error, zamykanie modalu przy powrocie(post/get ? przy zmianie strony pomoże?)
     //TODO stronicowanie, sortowanie, zaciąganie pełnej historii, modale dla errorów, modal dla sukcesu updatu
     //TODO zaciągać messages w jsp-> wiadomości w różnych językach do wyboru na stronie
-    @GetMapping("/")
-    public String home() {
-        return "root";
-    }
+//    @GetMapping("/")
+//    public String home() {
+//        return "deliveryList";
+//    }
 
+//Tu musi być get
     @GetMapping("/count")
     public String getCount(ModelMap modelMap) {
         modelMap.addAttribute("count", deliveryRepository.findAll().stream().mapToInt(d -> 1).count());
         return "count";
     }
 
-    @GetMapping("/deliver")
+    @GetMapping("/")
     public String getDeliveries(ModelMap modelMap) {
         modelMap.addAttribute("deliveries", deliveryRepository.findAll().stream().toList());
         return DELIVERY_LIST;
+    }
+
+    @GetMapping("/log")
+    public String login() {
+        return "log";
     }
 
     @GetMapping("/delivery")

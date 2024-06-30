@@ -122,7 +122,6 @@
                                 <td><a class="nav-link" href="${pageContext.request.contextPath}/delivery?deliveryId=${delivery.deliveryId}">${delivery.deliveryStatus}<span style="white-space: pre;">  </span>
                                     <c:choose>
                                         <c:when test="${delivery.finished=='true'}">
-                                            <i class="bi bi-check-circle-fill" style="color: forestgreen"></i>
                                             <i class="bi bi-house-check-fill" style="color: forestgreen"></i>
                                         </c:when>
                                     </c:choose>
@@ -416,7 +415,7 @@
             function refresh() {
                 $.ajax({
                     type: "GET",
-                    url: "${pageContext.request.contextPath}/deliver",
+                    url: "${pageContext.request.contextPath}/",
                     success: function() {
                         location.reload(); // Refresh the page after the AJAX call is successful
                     },
