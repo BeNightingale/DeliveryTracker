@@ -8,6 +8,7 @@ public enum Deliverer {
     POCZTA_POLSKA,
     DPD,
     DHL;
+
     public static Deliverer getDelivererFromString(String delivererName) {
         if (StringUtils.isEmpty(delivererName)) {
             return null;

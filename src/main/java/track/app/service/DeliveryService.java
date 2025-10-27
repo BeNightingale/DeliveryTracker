@@ -6,6 +6,7 @@ import com.google.gson.JsonDeserializer;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import track.app.InPostJsonDeserializer;
@@ -53,9 +54,6 @@ public class DeliveryService {
         for (DeliveryDto dto : deliveryDtoList) {
             counter += updateDeliveryStatus(dto);
         }
-//  Tylko do testów:
-//        log.error("THis!!!!");
-//        throw new RuntimeException("Unexpected error!");
         return counter;
     }
 

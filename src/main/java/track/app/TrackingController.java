@@ -12,18 +12,17 @@ import org.springframework.ui.ModelMap;
 import org.springframework.util.CollectionUtils;
 import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import track.app.mapper.InPostStatusMapper;
 import track.app.model.Deliverer;
 import track.app.model.Delivery;
 import track.app.model.History;
 import track.app.model.dto.DeliveryDto;
+import track.app.model.dto.UserDto;
 import track.app.repository.DeliveryRepository;
 import track.app.repository.HistoryRepository;
 import track.app.service.DeliveryService;
+import track.app.service.UserCreationService;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -42,10 +41,12 @@ public class TrackingController {
 
     private static final String DELIVERY_LIST = "deliveryList";
     private static final String DELIVERY = "delivery";
+    private static final String REGISTER = "register";
 
     private final DeliveryRepository deliveryRepository;
     private final HistoryRepository historyRepository;
     private final DeliveryService deliveryService;
+    private final UserCreationService userCreationService;
     //    private final LocaleResolver localeResolver;
     private final MessageSource messageSource;
 
@@ -57,7 +58,7 @@ public class TrackingController {
 //        return "deliveryList";
 //    }
 
-//Tu musi być get
+    //Tu musi być get
     @GetMapping("/count")
     public String getCount(ModelMap modelMap) {
         modelMap.addAttribute("count", deliveryRepository.findAll().stream().mapToInt(d -> 1).count());
@@ -180,8 +181,35 @@ public class TrackingController {
         } catch (Exception ex) {
             log.error("No success in getting information from deliverers.", ex);
             modelMap.addAttribute("errorMessage", ex.getMessage());
-           // return ResponseEntity.internalServerError().body(modelMap);
+            // return ResponseEntity.internalServerError().body(modelMap);
             throw ex;
+        }
+    }
+
+    @GetMapping("/pending_users")
+    public String showRegistrationForm(Model model) {
+        model.addAttribute("userDto", new UserDto());
+        return REGISTER; // This maps to register.jsp
+    }
+
+    @PostMapping("/pending_users")
+    public String createPendingUser(@ModelAttribute("userDto") UserDto userDto, Model model) {
+        userCreationService.createPendingUser(userDto);
+        model.addAttribute("message", "Check your email to confirm registration!");
+        return REGISTER;
+    }
+
+    @GetMapping("/confirm")
+    public String confirmUser(@RequestParam("token") String token, Model model) {
+        try {
+            userCreationService.createUser(token);
+            model.addAttribute("message", "Account confirmed successfully! You can now log in.");
+            log.error("EVERYTHING IS FINE!");
+            return "confirmation_success"; // → maps to confirmation_success.jsp
+        } catch (Exception ex) {
+            log.error("Something happenedError: ", ex);
+            model.addAttribute("error", "Invalid or expired confirmation token.");
+            return "confirmation_error"; // → maps to confirmation_error.jsp
         }
     }
 }

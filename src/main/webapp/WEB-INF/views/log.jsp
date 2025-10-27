@@ -25,9 +25,8 @@
     <h2 class="position-absolute top-10 start-50 translate-middle">Login Page</h2>
     <br>
     <br>
-    <div class="container d-flex justify-content-center  align-content-center">
+    <div class="container d-flex justify-content-center align-content-center">
         <form method="post" action="${pageContext.request.contextPath}/perform_login">
-            <%--        <div class="container">--%>
             <div class="row">
                 <div class="col-sm-4 mb-3" style="width: 500px">
                     <label for="username" class="form-label fw-semibold fs-5">Username:</label>
@@ -44,18 +43,30 @@
                     <br>
                 </div>
             </div>
-            <%--        </div>--%>
-            <br/>
             <br>
-            <button class="btn btn-primary btn-lg refreshBtn" type="submit">Login</button>
+            <button class="btn btn-primary btn-lg refreshBtn" type="submit" value="Login">Login</button>
+            <br/>
         </form>
     </div>
+    <br>
+    <br>
+    <br>
+    <p style="text-align:center; font-size: medium; font-weight: bold">Nie masz jeszcze konta?</p>
+    <br>
+    <div class="container d-flex justify-content-center align-content-center">
+        <button style="text-align: center" class="btn btn-primary btn-lg refreshBtn" type="submit">
+            <a class="nav-link" href="${pageContext.request.contextPath}/pending_users">Zarejestruj się</a>
+        </button>
+    </div>
+
+    <br/>
     <c:if test="${param.error}">
     <div class="container d-flex justify-content-center  align-content-center">
         <div class="row">
             <div class="col-sm-4 mb-3" style="width: 500px">
                 <br>
-                <div class="alert alert-danger bg-danger p-3 text-dark text-center text-white fw-semibold fs-4" role="alert">
+                <div class="alert alert-danger bg-danger p-3 text-dark text-center text-white fw-semibold fs-4"
+                     role="alert">
                     <i class="bi bi-exclamation-triangle-fill">&nbsp;&nbsp;&nbsp;&nbsp;</i>Invalid login or password!
                 </div>
             </div>

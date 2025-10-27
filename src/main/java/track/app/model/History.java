@@ -17,17 +17,17 @@ public class History {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @Column(name = "id", nullable = false)
     private int id;
-    @Column(name = "delivery_id")
+    @Column(name = "delivery_id", nullable = false)
     private int deliveryId;
-    @Column(name = "delivery_number")
+    @Column(name = "delivery_number", nullable = false, length = 30)
     // Powinno być prawie unikatowe i niepuste, ale dla różnych dostawców może się powtórzyć.
     private String deliveryNumber;
     @Enumerated(value = EnumType.STRING)
-    @Column(name = "delivery_status")
+    @Column(name = "delivery_status", nullable = false, length = 350)
     private DeliveryStatus deliveryStatus;
-    @Column(name = "status_description")
+    @Column(name = "status_description", length = 3000)
     private String statusDescription;
     @Column(name = "status_change_datetime")
     private LocalDateTime statusChangeDatetime;
